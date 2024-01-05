@@ -1,6 +1,5 @@
 import {Horse} from "./Horse";
 import {Race} from "./Race";
-import {BuffContainer} from "./BuffContainer";
 import {EventEmitter} from "eventemitter3";
 import {Track} from "./Track";
 import {Segment} from "./Segment";
@@ -47,18 +46,23 @@ export type HipEmitterType = {
     'race.start': () => void,
     'round.start': (race: Race) => void,
     'round.end': (race: Race) => void,
-    'horse.round.start':( race:Race,horse:Horse) => void,
-    'horse.round.end':(race:Race,horse:Horse) => void,
-    'horse.moved': (race:Race,moved:number) => void,
-    'segment.round.start': (race: Race,segment:Segment) => void,
-    'segment.round.end': (race: Race,segment:Segment) => void,
-    'track.round.start': (race:Race ,track:Track) => void,
-    'track.round.end': (race:Race ,track:Track) => void,
+    'horse.round.start': (race: Race, horse: Horse) => void,
+    'horse.round.end': (race: Race, horse: Horse) => void,
+    'horse.moved': (race: Race, moved: number) => void,
+    'segment.round.start': (race: Race, segment: Segment) => void,
+    'segment.round.end': (race: Race, segment: Segment) => void,
+    'track.round.start': (race: Race, track: Track) => void,
+    'track.round.end': (race: Race, track: Track) => void,
+    'buff.end': (ctx: { race: Race, horse: Horse, buff: BuffBase }) => void
     [key: string]: (...args: any[]) => void,
 }
 
-type Buff<T> = BuffBase & { listener?: EventEmitter<HipEmitterType>, modifier?: (target: T,buff:BuffWithTime<T>) => T };
-type BuffWithTime<T> = Buff<T> & { times: number, remains: number,stacks:number }
+type Buff<T> = BuffBase & {
+    listeners?: { [key: string]: (...args: any[]) => void },
+    listener?: EventEmitter<HipEmitterType>,
+    modifier?: (target: T, buff: BuffWithTime<T>) => T
+};
+type BuffWithTime<T> = Buff<T> & { times: number, remains: number, stacks: number }
 
 
 interface RaceLifeCycle {
@@ -74,12 +78,12 @@ enum RaceEvent {
     Move,
 }
 
-enum RaceMode{
-    Pure='pure',
-    RandomEvent='random',
+enum RaceMode {
+    Pure = 'pure',
+    RandomEvent = 'random',
     Contract = 'contract',
 }
 
 
-export type {UserInfo, Buff,BuffWithTime, RaceLifeCycle, RaceLog};
-export {EffectType, HorseStatus,RaceEvent,RaceMode};
+export type {UserInfo, Buff, BuffWithTime, RaceLifeCycle, RaceLog};
+export {EffectType, HorseStatus, RaceEvent, RaceMode};

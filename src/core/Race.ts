@@ -68,7 +68,12 @@ class Race {
         for (const player of shuffle(this.players)) {
             let track: Track;
             this.tracks.push(track = new Track())
-            track.horses = [new Horse(player, player.display)] //todo 允许赛场自定义基础速度与其他基础属性
+
+            let horse = new Horse(player, player.display)
+            horse.track=track;
+            track.horses = [horse]
+
+            //todo 允许赛场自定义基础速度与其他基础属性
         }
     }
 
@@ -90,7 +95,7 @@ class Race {
         }))
 
         //检查winner
-        if (this.tracks.findIndex(track => track.horses.findIndex(horse => horse.step >= track.segments.length))) {
+        if (this.tracks.findIndex(track => track.horses.findIndex(horse => horse.step >= track.segments.length)>=0)>=0) {
             //win
             this.ended = true;
             console.log('WINNER WINNER CHICKEN DINNER!')

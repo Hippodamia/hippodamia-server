@@ -45,6 +45,8 @@ export class Horse {
         this._property = value
     }
 
+    //todo 让property能够被直接更改子值
+
     public onHorseRoundStart(race: Race, track: Track) {
 
         this.buffContainer.emit('horse.round.start')
@@ -58,7 +60,7 @@ export class Horse {
         race.components.forEach(x => x.emit("horse.round.end", race, this))
 
         //刷新冷却回合
-        this.buffContainer.refresh();
+        this.buffContainer.refresh(race,this);
     }
 
     /**

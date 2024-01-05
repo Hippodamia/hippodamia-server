@@ -1,4 +1,7 @@
 import {Buff, BuffWithTime, HipEmitterType} from "./types";
+import {EventEmitter} from "eventemitter3";
+import {Horse} from "./Horse";
+import {Race} from "./Race";
 
 
 export class BuffContainer<S, ModifierType> {
@@ -20,7 +23,15 @@ export class BuffContainer<S, ModifierType> {
             find.stacks += stacks;
         } else {
             let b: BuffWithTime<ModifierType> = {...buff, times, remains: times, stacks};
+            b.listener = new EventEmitter<HipEmitterType>();
             this._buffs.push(b);
+
+            //将listeners下的初始事件函数注册到listener这个对象中
+            if (b.listeners != undefined)
+                for (const event in b.listeners)
+                    b.listener.on(event, b.listeners[event])
+
+
         }
         this.sortByPriority();
     }
@@ -40,9 +51,14 @@ export class BuffContainer<S, ModifierType> {
      * Sorts an array of buffs by priority and applies each buff to the target in order.
      */
     getModified(target: ModifierType): ModifierType {
-        let _target = JSON.parse(JSON.stringify(target)) as ModifierType;
+        let _target = JSON.parse(JSON.stringify(target)) as ModifierType
         this._buffs.forEach(buff => {
-            _target = buff.modifier(_target, buff)
+            if(buff.modifier!=undefined)
+                _target = buff.modifier(_target, buff)??_target
+/*            console.debug('---')
+            console.debug(JSON.stringify(_target))
+            console.debug(buff.name)
+            console.debug('---')*/
         })
         return _target
     }
@@ -54,12 +70,13 @@ export class BuffContainer<S, ModifierType> {
     /**
      * 刷新所有buff的剩余回合数
      */
-    refresh() {
+    refresh(race:Race,horse:Horse) {
         for (let i = 0; i < this._buffs.length; i++) {
             const buff = this._buffs[i];
             buff.remains--;
             buff.listener?.emit('buff.refresh', buff)
             if (buff.remains <= 0) {
+                buff.listener?.emit('buff.end', {race,horse,buff})
                 this._buffs.splice(i, 1);
                 i--;
                 this.sortByPriority();

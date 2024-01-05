@@ -14,6 +14,7 @@ export class FortuityDay extends HipComponent{
             if(Math.random() < 0.5){
                 //从事件列表中获取一个事件
                 const random = HippodamiaRandomEventManager.getRandom();
+                console.debug('[REM]执行事件'+random.name)
                 random.handler(race,horse)
             }
 
