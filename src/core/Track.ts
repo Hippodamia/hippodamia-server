@@ -5,15 +5,15 @@ import {Race} from "./Race";
 
 export class Track {
     //初始化轨道内部的Segment(格)
-    constructor() {
-        for (let i = 0; i < 14; i++) {
+    constructor(length   = 14) {
+        for (let i = 0; i < length; i++) {
             const segment = new Segment();
             this.segments.push(segment);
         }
-        this.buffs = new BuffContainer<Track>();
+        //this.buffs = new BuffContainer<Track,any>();
     }
 
-    buffs: BuffContainer<Track>;
+    //buffs: BuffContainer<Track,any>; //todo track也允许拥有buff，用于影响整个赛道以及选手。
     horses: Horse[] = [];
     segments: Segment[] = [];
 
@@ -28,19 +28,17 @@ export class Track {
     }
 
     next(race: Race) {
-        this.buffs.call<void, any>("onTrackRoundStart", undefined, this, {race});
+        //todo buff
 
-        this.segments.forEach((s) =>
-            s.buffs.call<void, any>("onSegmentRoundStart", undefined, s,{race})
-        );
-        this.segments.forEach((s) => s.buffs.refresh());
+
+        //this.segments.forEach((s) => s.buffs.refresh());
 
         for (let horse of this.horses) {
+            race.components.forEach(c=>c.emit("track.round.end", race, this))
             horse.next(race,this);
-
         }
-        this.buffs.call<void, any>("onTrackRoundEnd", undefined, this,{race});
+        //this.buffs.call<void, any>("onTrackRoundEnd", undefined, this,{race});
 
-        this.buffs.refresh();
+        //this.buffs.refresh();
     }
 }

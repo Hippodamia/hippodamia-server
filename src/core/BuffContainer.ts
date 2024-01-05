@@ -1,61 +1,81 @@
-import {Buff} from "./types";
-import {HipComponent} from "./HipComponent";
-import {EventEmitter} from "eventemitter3";
+import {Buff, BuffWithTime, HipEmitterType} from "./types";
 
 
-export class BuffContainer<S> {
+export class BuffContainer<S, ModifierType> {
 
+    _buffs: BuffWithTime<ModifierType>[] = [];
+    _source: S;
 
-    _buffs: Buff[] = [];
-
-    push(buff: Buff) {
-
+    /**
+     * Adds a buff to the buff list.
+     *
+     * @param buff - The buff to be added.
+     * @param times - The number of times the buff should be added.
+     * @param stacks - stacks
+     */
+    add(buff: Buff<ModifierType>, times: number, stacks: number = 1) {
         let find = this._buffs.find(b => b.name == buff.name);
         if (find) {
-            find.time += buff.time;
+            find.remains = Math.max(find.times, times);
+            find.stacks += stacks;
         } else {
-            this._buffs.push(buff)
+            let b: BuffWithTime<ModifierType> = {...buff, times, remains: times, stacks};
+            this._buffs.push(b);
         }
+        this.sortByPriority();
+    }
 
+    remove(buff: Buff<ModifierType>) {
+        let find = this._buffs.find(b => b.name == buff.name);
+        if (find) {
+            this._buffs.splice(this._buffs.indexOf(find), 1)
+        }
+    }
+
+    sortByPriority() {
+        this._buffs.sort((a, b) => a.priority - b.priority);
+    }
+
+    /**
+     * Sorts an array of buffs by priority and applies each buff to the target in order.
+     */
+    getModified(target: ModifierType): ModifierType {
+        let _target = JSON.parse(JSON.stringify(target)) as ModifierType;
+        this._buffs.forEach(buff => {
+            _target = buff.modifier(_target, buff)
+        })
+        return _target
     }
 
     get() {
         return this._buffs;
     }
 
-    //刷新所有buff的剩余回合数
+    /**
+     * 刷新所有buff的剩余回合数
+     */
     refresh() {
         for (let i = 0; i < this._buffs.length; i++) {
             const buff = this._buffs[i];
-            buff.time--;
-            if (buff.time <= 0) {
+            buff.remains--;
+            buff.listener?.emit('buff.refresh', buff)
+            if (buff.remains <= 0) {
                 this._buffs.splice(i, 1);
                 i--;
+                this.sortByPriority();
             }
         }
     }
 
-    call<T, P>(event: string, target: T, source: S, param: P | undefined = undefined): T {
-        for (let buff of this._buffs) {
-            if (buff.listener[event]) {
-                if (param) {
-                    target = buff.listener[event]?.(target, {
-                        ...param,
-                        ...source
-                    });
-                } else {
-                    target = buff.listener[event]?.(target, {
-                        source
-                    });
-                }
-            }
-        }
-        return target;
+    emit<K extends keyof HipEmitterType>(event: K) {
+        this._buffs.forEach(buff => {
+            buff.listener?.emit(event)
+        })
     }
 }
 
 
-export class BuffPool {
+/*export class BuffPool {
     private pool: Map<string, Buff>
     private nameDic: Map<string, string>
 
@@ -79,4 +99,4 @@ export class BuffPool {
         else
             return undefined
     }
-}
+}*/

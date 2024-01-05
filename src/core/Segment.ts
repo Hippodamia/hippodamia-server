@@ -3,10 +3,7 @@ import { Track } from "./Track";
 
 export class Segment {
   constructor() {
-    this.buffs = new BuffContainer<Segment>();
+    this.buffs = new BuffContainer<Segment, any>();
   }
-  buffs: BuffContainer<Segment>;
-
-
-
+  buffs: BuffContainer<Segment,any>;
 }

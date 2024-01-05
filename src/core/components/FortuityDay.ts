@@ -1,5 +1,6 @@
 
-import {HipComponent} from "../HipComponent";
+import {HipComponent} from "../HipEventEmitter";
+import {HippodamiaRandomEventManager} from "../../hippodamia";
 
 export class FortuityDay extends HipComponent{
     constructor() {
@@ -7,7 +8,14 @@ export class FortuityDay extends HipComponent{
 
         this.load()
 
-        this.on("onHorseRoundStart",()=>{
+        //todo 处理事件列表，允许根据人数删除一部分事件索引，尽量根据事件唯一id列表来处理
+
+        this.on("horse.round.start",(race,horse)=>{
+            if(Math.random() < 0.5){
+                //从事件列表中获取一个事件
+                const random = HippodamiaRandomEventManager.getRandom();
+                random.handler(race,horse)
+            }
 
         })
     }

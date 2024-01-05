@@ -7,13 +7,13 @@ import {CommandRouter} from "../../../types";
 export const createRace: CommandRouter = async (ctx) => {
     const cid = ctx.channel.id;
     if (!roomService.getRoom(cid)) {
-        const race = new Race({speed: 10})
+        const race = new Race({speed: 10},ctx.args.mode as any)
         roomService.createRoom({
             channelId: ctx.channel.id,
             race,
             playerList: [],
         })
-        ctx.reply(raceCreatedTemplate())
+        ctx.reply(raceCreatedTemplate(ctx.args.mode))
     }
 }
 
@@ -66,31 +66,39 @@ export const startRace = async (ctx) => {
             //timer task
             new Promise((resolve, reject) => {
                 const interval = setInterval(() => {
+                    race.next()
+                    
                     //定时发送赛场，分为日志和选手位置
                     ctx.reply(
-                        [
-                            ...race.logs,
-                            '---',
-                            ...race.tracks.map(
-                                track => {
-                                    let line = '.'.repeat(track.segments.length).split('');
-                                    track.horses.forEach(horse => {
-                                        line[track.segments.length - horse.step] = horse.display
-                                    })
-                                    return line.join('');
-                                }
-                            )
-                        ].join('\n')
+                        renderRace(race)
                     )
                     if (race.ended){
                         resolve(true)
                         clearInterval(interval)
                     }
-                    race.next()
                 }, 600) //todo 修改到慢速
             })
         } else
             ctx.reply("😮比赛似乎已经开始咯")
 
     }
+}
+
+function renderRace(race:Race):string{
+    return [
+        ...race.logs.map(x=>x.content),
+        '---',
+        ...race.tracks.map(
+            track => {
+                let line = '.'.repeat(track.segments.length).split('');
+                track.horses.forEach(horse => {
+                    line[track.segments.length - horse.step] = horse.display
+                })
+
+                let moved = track.horses[0].last_moved ?? 0;
+
+                return `[${moved<0?'-':'+'}${moved}]` + line.join('');
+            }
+        )
+    ].join('\n')
 }

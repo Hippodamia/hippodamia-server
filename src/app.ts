@@ -5,10 +5,17 @@ import * as Routers from './bot/routes'
 
 import {startListen} from './api'
 import {doTest} from "./test";
-//satori
+import {readShops} from "./bot/services/configService";
+import * as fs from "fs";
+
+import path from 'path';
+import {HippodamiaRandomEventManager} from "./hippodamia";
 
 const bot = new Bot();
 
+
+
+//指令树路由
 bot.cmd('/小马积分', Routers.queryUserCoins)
 
 bot.cmd('/创建赛马 <mode>', Routers.createRace)
@@ -22,7 +29,13 @@ bot.cmd('/加入赛马 <nick>', Routers.joinRace)
 bot.cmd('/race start', Routers.startRace)
 bot.cmd('/开始赛马', Routers.startRace)
 
-bot.cmd('/shop <page>', Routers.showShops)
+bot.cmd('/shops <page>', Routers.showShops)
+bot.cmd('/小马商店 <page>', Routers.showShops)
+//动态注册商店指令
+for (const shop of readShops()) {
+    bot.cmd(`/${shop.name} <page>`,Routers.showShopItems)
+}
+
 
 bot.commands.find(cmd => cmd.name == 'race').showHelp = true;
 bot.cmd('/wiki event list <page>', (ctx) => {
@@ -43,6 +56,11 @@ bot.cmd('/wiki event list <page>', (ctx) => {
         count: Number(ctx.args.page ?? 1)
     }, "/wiki event list <page>"))
 })
+
+//载入核心数据
+//载入scripts
+HippodamiaRandomEventManager.loadRandomEvents()
+
 
 class SandboxAdapter1 implements Adapter {
     ws: WebSocket;
@@ -84,6 +102,6 @@ bot.load(new MockAdapter())
 //自带的coins api
 startListen().then().catch(e => console.log(e));
 
-doTest()
+doTest().then( )
 
 export {bot}

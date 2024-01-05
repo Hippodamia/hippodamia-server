@@ -9,7 +9,7 @@ export function paginationTemplate(data: string[], page: { size: number, count: 
 
     const size = page.size;
     const count = page.count;
-    const list = data.slice(page.count, size);
+    const list = data.slice((count - 1) * size, size);
     const pagination = ['当前第' + page.count + '页,共' + Math.ceil(data.length / size) + '页',`使用 ${command} 来换页`]
     return [...list, ...pagination].join('\n');
 }
