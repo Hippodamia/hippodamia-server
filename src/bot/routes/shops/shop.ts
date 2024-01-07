@@ -1,7 +1,6 @@
 import roomService from "../../services/RoomService";
 import {Race} from "../../../core/Race";
 import {raceCreatedTemplate} from "../../templates/raceTemplate";
-import {ShopDataService} from "../../services/userDataService";
 import {paginationTemplate} from "../../templates/commonTemplate";
 import {CommandRouter} from "../../../types";
 import {readShops} from "../../services/configService";

@@ -1,16 +1,15 @@
 import {Race} from "./core/Race";
 import {Horse} from "./core/Horse";
 import path from "path";
-import {getFilesRecursively, readFilesRecursive} from "./utils";
+import {I18n, getFilesRecursively, readFilesRecursive} from "./utils";
 import fs from "fs";
 
 export class HippodamiaRandomEventManager {
     static events: Map<string, RandomEvent> = new Map();
 
     static register(event: RandomEvent) {
-
         this.events.set(event.name, event);
-        console.log('[REM]Register random event: ' + event.name);
+        console.log('[REM]Register random event: ' + event.name +'|' +event.alias);
     }
 
     static get(name: string) {
@@ -45,10 +44,13 @@ export class HippodamiaRandomEventManager {
             })*/
 
         getFilesRecursively(path.resolve('./config/scripts')).forEach((file) => {
-            console.log('[REM]Loading script file:', file);
+
             if (path.extname(file) === '.js') {
                 try {
-                   eval(fs.readFileSync(file).toString());
+                    let text = fs.readFileSync(file).toString();
+                    const result = text.replace(/\/\/remove([\s\S]*?)\/\/remove/g, '');
+                    eval(result);
+                    console.log('[REM]Loaded script file:', file);
                 } catch (error) {
                     console.error('Failed to load script file:', file, error);
                 }
@@ -72,3 +74,6 @@ export enum RandomEventType {
     Negative,
     Neutral,
 }
+
+
+export const i18n = new I18n('zh_cn', './config/languages');

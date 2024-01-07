@@ -3,6 +3,9 @@ import {HipComponent} from "../HipEventEmitter";
 import {HippodamiaRandomEventManager} from "../../hippodamia";
 
 export class FortuityDay extends HipComponent{
+
+
+
     constructor() {
         super();
 
@@ -14,15 +17,24 @@ export class FortuityDay extends HipComponent{
             if(Math.random() < 0.5){
                 //从事件列表中获取一个事件
                 const random = HippodamiaRandomEventManager.getRandom();
-                console.debug('[REM]执行事件'+random.name)
+                console.debug('[REM]执行事件：'+random.name+'->'+horse.raw_display)
+                //为玩家数据库增加玩家触发事件的记录
                 random.handler(race,horse)
             }
 
         })
     }
 
+
+
     load() {
 
     }
 
+    info(){
+        return {
+            name:'FortuityDay',
+            alias:['RandomEvent']
+        }
+    }
 }

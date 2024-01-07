@@ -17,6 +17,7 @@ export class Horse {
         this.user = user;
         this.step = 1;
         this.buffContainer = new BuffContainer<Horse, HorseProperty>();
+        this.raw_display = display
         this._property = {
             speed: 10,
             effect_resistance: 0,
@@ -31,6 +32,7 @@ export class Horse {
     buffContainer: BuffContainer<Horse, HorseProperty>;
     step: number;
 
+    public raw_display: string;
     public last_moved: number;
 
     private _property: HorseProperty;
@@ -48,17 +50,13 @@ export class Horse {
     //todo 让property能够被直接更改子值
 
     public onHorseRoundStart(race: Race, track: Track) {
-
-        this.buffContainer.emit('horse.round.start')
-
+        this.buffContainer.emit('horse.round.start',race,this)
         race.components.forEach(x => x.emit("horse.round.start", race, this))
     }
 
     public onHorseRoundEnd(race: Race, track: Track) {
-        this.buffContainer.emit('horse.round.end')
-
+        this.buffContainer.emit('horse.round.end',race,this)
         race.components.forEach(x => x.emit("horse.round.end", race, this))
-
         //刷新冷却回合
         this.buffContainer.refresh(race,this);
     }
@@ -69,9 +67,8 @@ export class Horse {
      */
     public next(race: Race, track: Track) {
         let step = this.step;
-        this.onHorseRoundStart(race, track);
 
-        //概率获得随机事件
+        this.onHorseRoundStart(race, track);
 
         this.move(this.getRandomSteps())
 
@@ -82,6 +79,10 @@ export class Horse {
         return this.last_moved;
     }
 
+    /**
+     * 移动
+     * @param step 
+     */
     public move(step: number) {
         let move = step;
         if (this.Property.status == HorseStatus.NORMAL) {

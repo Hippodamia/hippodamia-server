@@ -1,7 +1,6 @@
 import {PlayerInfo, Room} from "../../types";
 
 
-
 class RoomService {
     private rooms: Room[] = [];
 
@@ -12,11 +11,20 @@ class RoomService {
     createRoom(room: Room) {
         // 检查 channelId 是否重复
         const existingRoom = this.rooms.find(r => r.channelId === room.channelId);
-        if (existingRoom) {
+        if (existingRoom && !existingRoom.race.ended) {
             return false;
+        } else if (existingRoom && existingRoom.race.ended) {
+            this.removeRoom(existingRoom.channelId)
         }
         this.rooms.push(room);
         return true;
+    }
+
+    public removeRoom(channelId: string) {
+        const index = this.rooms.findIndex(r => r.channelId === channelId);
+        if (index !== -1) {
+            this.rooms.splice(index, 1);
+        }
     }
 
     addPlayer(roomId: string, player: PlayerInfo) {
@@ -32,11 +40,11 @@ class RoomService {
         room.playerList.push(player);
     }
 
-    refreshListUI(room:Room){
-/*        let card = playerListCard(room.playerList,!room.started ?'加入这场比赛!':'比赛已开始!')
-        if(room.playerList.length >= 6 && !room.started){
+    refreshListUI(room: Room) {
+        /*        let card = playerListCard(room.playerList,!room.started ?'加入这场比赛!':'比赛已开始!')
+                if(room.playerList.length >= 6 && !room.started){
 
-        }*/
+                }*/
     }
 }
 

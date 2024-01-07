@@ -1,5 +1,12 @@
-export function raceCreatedTemplate(mode: string = '纯净') {
-    return ['🐎比赛创建完毕!', '本群开启了新的比赛!', `比赛采用了:${mode}模式`, '使用 /race join <nick> 来加入比赛', '例如: /race join 辞小镜'].join('\n')
+export function raceCreatedTemplate(mode: string = 'pure') {
+
+    const map = {
+        'pure' :'纯净',
+        'random' :'随机事件',
+        'contract' : '契约'
+    }
+
+    return ['🐎比赛创建完毕!', '本群开启了新的比赛!', `比赛采用了:${map[mode]}模式`, '使用 /加入赛马 <nick> 来加入比赛', '例如: /加入赛马 辞小镜'].join('\n')
 }
 
 export function playerJoinedTemplate(nick: string, currentPlayerCount: number) {

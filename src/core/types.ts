@@ -32,17 +32,12 @@ interface BuffBase {
     type: EffectType;
     desc: string,
     doc?: string,
+    canStack?:boolean
     priority?: number;//应为1-100优先级越大，越会在后面处理
 }
 
-type ValidKey = Exclude<string, keyof BuffBase>;
 
-interface BuffListener {
-    [key: ValidKey]: (target: any, param?: any) => any;
-}
-
-//时间列表
-export type HipEmitterType = {
+export type HipEmitterTypes = {
     'race.start': () => void,
     'round.start': (race: Race) => void,
     'round.end': (race: Race) => void,
@@ -58,8 +53,8 @@ export type HipEmitterType = {
 }
 
 type Buff<T> = BuffBase & {
-    listeners?: { [key: string]: (...args: any[]) => void },
-    listener?: EventEmitter<HipEmitterType>,
+    listeners?: {[K in keyof HipEmitterTypes]?:HipEmitterTypes[K]},
+    listener?: EventEmitter<HipEmitterTypes>,
     modifier?: (target: T, buff: BuffWithTime<T>) => T
 };
 type BuffWithTime<T> = Buff<T> & { times: number, remains: number, stacks: number }

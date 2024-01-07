@@ -35,7 +35,9 @@ export async function doTest(){
 
 export function test(){
     const race = new Race({
-        speed:10
+        speed:10,
+        length:20,
+        mode:'random'
     })
     race.join({id:'114514'},'小马')
     race.join({id:'11445'},'大马')

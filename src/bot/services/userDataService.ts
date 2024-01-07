@@ -1,6 +1,5 @@
-import {PrismaClient} from '@prisma/client'
-
-const prisma = new PrismaClient()
+import {AppDataSource} from "../../data/data-source";
+import {User} from "../../data/entity";
 
 export class UserDataService {
     private platform_id: string;
@@ -20,52 +19,38 @@ export class UserDataService {
 
     async getUserInfo() {
         try {
-            return await prisma.user.findFirst({
-                where: {
-                    qqId: this.platform_id
-                }
-            });
+            return await AppDataSource.manager.findOne(User,{where:{qqId:this.platform_id}}) ?? await this.createDefaultUser();
         } catch (e) {
-            this.createDefaultUser()
+            console.log(e)
         }
     }
 
     //创建默认用户数据
-    private createDefaultUser() {
+    private async createDefaultUser() {
         try {
-            prisma.user.create({
-                data: {
-                    qqId: this.platform_id,
-                    nick: '🐎',
-                    coins: 100
-                }
-            })
+            console.log('[UDS]尝试创建新用户'+this.platform_id)
+            return AppDataSource.manager.create(User, {
+                qqId: this.platform_id,
+                nick: '🐎',
+                coins: BigInt(200)
+            });
         } catch (e) {
             throw "创建用户数据失败";
         }
     }
 
     public async updateUserNick(nick: string) {
-
+        let user = await AppDataSource.manager.findOne(User,{where:{qqId:this.platform_id}})
+        user.nick=nick;
+        return user;
     }
 
     //增加用户的积分
     public async updateUserCoins(coins: number) {
-        await prisma.user.update({
-            where: {
-                qqId: this.platform_id
-            },
-            data: {
-                coins: {
-                    increment: coins
-                }
-            }
-        })
+        let user = await AppDataSource.manager.findOne(User,{where:{qqId:this.platform_id}})
+        user.coins += BigInt(coins);
+        user.save();
+        return user;
     }
 }
 
-export  class ShopDataService {
-    async getShops(){
-        return await prisma.shop.findMany();
-    }
-}

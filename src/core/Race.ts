@@ -1,15 +1,14 @@
-import {Track} from "./Track";
-import {RaceLog, UserInfo} from "./types";
-import {Horse} from "./Horse";
-import {shuffle} from "./utils";
-import {HipComponent} from "./HipEventEmitter";
-import {FortuityDay} from "./components/FortuityDay";
+import { Track } from "./Track";
+import { RaceLog, UserInfo } from "./types";
+import { Horse } from "./Horse";
+import { shuffle } from "../utils";
+import { HipComponent } from "./HipEventEmitter";
+import { FortuityDay } from "./components/FortuityDay";
 
 export interface RaceConfig {
-    /**
-     * 初始速度
-     */
-    speed: number
+    speed: number,
+    length: number,
+    mode: 'pure' | 'random' | 'contract'
 }
 
 class Race {
@@ -22,17 +21,17 @@ class Race {
 
     ended: boolean = false
 
-    mode: 'pure' | 'random' | 'contract' = 'pure'
+    mode: RaceConfig['mode'] = 'pure'
 
     config: RaceConfig;
 
     public isStarted: boolean = false;
 
-    constructor(config: RaceConfig,mode: 'pure' | 'random' | 'contract' = 'pure') {
+    constructor(config: RaceConfig = { speed: 10, length: 20, mode: 'pure' },) {
         this.config = config;
-        this.mode = mode;
-        if(this.mode=='random'){
-           this.components.push(new FortuityDay())
+        this.mode = config.mode;
+        if (this.mode == 'random') {
+            this.components.push(new FortuityDay())
         }
     }
 
@@ -58,7 +57,7 @@ class Race {
         if (this.players.find(x => x.id == user.id)) {
             return false;
         }
-        this.players.push({...user, display})
+        this.players.push({ ...user, display })
         return true;
     }
 
@@ -70,7 +69,7 @@ class Race {
             this.tracks.push(track = new Track())
 
             let horse = new Horse(player, player.display)
-            horse.track=track;
+            horse.track = track;
             track.horses = [horse]
 
             //todo 允许赛场自定义基础速度与其他基础属性
@@ -95,7 +94,7 @@ class Race {
         }))
 
         //检查winner
-        if (this.tracks.findIndex(track => track.horses.findIndex(horse => horse.step >= track.segments.length)>=0)>=0) {
+        if (this.tracks.findIndex(track => track.horses.findIndex(horse => horse.step >= track.segments.length) >= 0) >= 0) {
             //win
             this.ended = true;
             console.log('WINNER WINNER CHICKEN DINNER!')
@@ -111,21 +110,36 @@ class Race {
         return horses;
     }
 
+    getOthers(excludes: Horse[]) {
+        return this.tracks.flatMap(t => t.horses)
+            .filter(x => !excludes.includes(x));
+    }
+
     pushLog(horse: Horse, content: string) {
         this.logs.push({
             player: horse.display,
-            content: content.replace('%player%', horse.display),
+            content: content.replace('%player%', horse.raw_display),
             round: this.round
         })
     }
 
     getRaceResult() {
+        const horses = this.getHorses().map(x => {
+            return {
+                won: x.step >= x.track?.segments.length ?? false,
+                step: x.step,
+                user: x.user,
+                display: x.raw_display,
+            }
+        })
+
         return {
-            winners: this.getHorses().find(x => x.track && x.step >= x.track?.segments.length)
+            winners: horses.filter(x => x.won),
+            ranks: horses.sort((a, b) => b.step - a.step)
         }
     }
 
 
 }
 
-export {Race};
+export { Race };
