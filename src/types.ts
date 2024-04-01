@@ -1,10 +1,10 @@
 import {Race} from "./core/Race";
 import {Context} from "@hippodamia/bot";
 
-export interface PlayerInfo{
-    userId:string,
-    userName?:string,
-    userNickName?:string,
+export interface PlayerInfo {
+    userId: string,
+    userName?: string,
+    userNickName?: string,
 }
 
 /**
@@ -15,28 +15,44 @@ export interface Room {
     channelId: string,
     playerList: PlayerInfo[],
     race: Race
-    started?:boolean
+    started?: boolean
 }
 
 /**
  * 路由
  */
-export type CommandRouter = (ctx: Context) => void|Promise<void>
+export type CommandRouter = (ctx: Context) => void | Promise<void>
 
 
-export interface Shop{
-    name:string,
-    description:string,
-    items:ShopItem[]
+export interface Shop {
+    name: string,
+    description: string,
+    items: ShopItem[]
 }
 
-export interface ShopItem{
-    name:string,
-    description:string,
-    price:number,
-    discount?:number,
-    type?:'global_limit' | 'user_limit' |'no_limit',
-    limit?:number
+export interface ShopItem {
+    name: string,
+    description: string,
+    price: number,
+    discount?: number,
+    type?: 'global_limit' | 'user_limit' | 'no_limit',
+    limit?: number
 }
 
-
+export type GameSettings = Partial<{
+    enable: boolean;
+    admins: string[];
+    cd:number;
+    game: {
+        [key: string]: Partial<{
+            speed: number;
+            min_player:number;
+            max_player:number;
+            length: number;
+            luck: number;
+            effect_resistance: number;
+            exclude: string[];
+            base_mode: string
+        }>;
+    };
+}>;

@@ -88,6 +88,9 @@ export class OPQAdapter implements Adapter {
     init?(bot: Bot) {
 
         this.ws = new WebSocket(`ws://${this.baseUrl}/ws`);
+        this.ws.on('error',()=>{
+            console.log('[OPQAdapter]连接失败')
+        })
         this.ws.on('open', () => {
             console.log('[OPQAdapter]已连接:'+this.ws.url)
         })

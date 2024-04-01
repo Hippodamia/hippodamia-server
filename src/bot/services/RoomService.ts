@@ -1,20 +1,26 @@
-import {PlayerInfo, Room} from "../../types";
+import { GroupSettingsManager } from "../../managers/GroupSettingsManager";
+import { PlayerInfo, Room } from "../../types";
 
 
 class RoomService {
     private rooms: Room[] = [];
+    private allow_time_room = new Map<string, number>();
 
     getRoom(channelId: string) {
         return this.rooms.find(x => x.channelId == channelId)
     }
 
-    createRoom(room: Room) {
+    createRoom(room: Room):boolean {
         // 检查 channelId 是否重复
         const existingRoom = this.rooms.find(r => r.channelId === room.channelId);
         if (existingRoom && !existingRoom.race.ended) {
-            return false;
-        } else if (existingRoom && existingRoom.race.ended) {
+            throw "existing room";
+        } else if (Date.now() < (this.allow_time_room.get(room.channelId) ?? 0)) {
+            throw "cd limit";
+        }
+        else if (existingRoom && existingRoom.race.ended) {
             this.removeRoom(existingRoom.channelId)
+            console.log('[RoomService]删除了房间')
         }
         this.rooms.push(room);
         return true;
@@ -24,6 +30,7 @@ class RoomService {
         const index = this.rooms.findIndex(r => r.channelId === channelId);
         if (index !== -1) {
             this.rooms.splice(index, 1);
+            this.allow_time_room.set(channelId, Date.now() + (GroupSettingsManager.get(channelId)?.cd ?? 0));
         }
     }
 
@@ -46,6 +53,7 @@ class RoomService {
 
                 }*/
     }
+
 }
 
 const roomService = new RoomService();

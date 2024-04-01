@@ -4,9 +4,12 @@ import {HorseStatus, UserInfo} from "./types";
 import {Race} from "./Race";
 
 interface HorseProperty {
-    speed: number // 0-20的数值
-    effect_resistance: number //1为单位的增长概率的倍率
-    luck: number // 1为单位，用于增加幸运概率的倍率
+    // 0-20的数值
+    speed: number
+    //1为单位的增长概率的倍率
+    effect_resistance: number
+    // 1为单位，用于增加幸运概率的倍率
+    luck: number
     status: HorseStatus,
     display: string
 

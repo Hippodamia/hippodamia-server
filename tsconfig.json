@@ -105,6 +105,7 @@
     "./src/core/"
   ],
   "exclude": [
-    "./src/core/components/"
+    "./src/core/components/",
+    "./dist/**/*"
   ]
 }

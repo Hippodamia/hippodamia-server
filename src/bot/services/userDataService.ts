@@ -39,13 +39,20 @@ export class UserDataService {
         }
     }
 
+    /**
+     * 更新用户的昵称
+     * @param nick
+     */
     public async updateUserNick(nick: string) {
         let user = await AppDataSource.manager.findOne(User,{where:{qqId:this.platform_id}})
         user.nick=nick;
         return user;
     }
 
-    //增加用户的积分
+    /**
+     * 增加用户的积分
+     * @param coins
+     */
     public async updateUserCoins(coins: number) {
         let user = await AppDataSource.manager.findOne(User,{where:{qqId:this.platform_id}})
         user.coins += BigInt(coins);

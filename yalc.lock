@@ -1,0 +1,13 @@
+{
+  "version": "v1",
+  "packages": {
+    "@hippodamia/bot": {
+      "signature": "5ac149d7a582a08671e26c20a380fa0c",
+      "file": true
+    },
+    "@hippodamia/adapter-sandbox": {
+      "signature": "8af1698781ddcba2febd4807fbc2df53",
+      "file": true
+    }
+  }
+}

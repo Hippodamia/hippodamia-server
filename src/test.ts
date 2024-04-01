@@ -3,7 +3,7 @@ import {Race} from "./core/Race";
 import {EffectType} from "./core/types";
 
 function mock(message: string) {
-    bot.emit('command', {user: {id: '114514'}, command: message, channel: {id: '10000'}, platform: 'mock'})
+    bot.emit('command', {user: {id: '114514'}, command_text: message, channel: {id: '10000'}, platform: 'mock'})
 }
 
 function renderRace(race:Race):string{

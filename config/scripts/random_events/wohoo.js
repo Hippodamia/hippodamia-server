@@ -1,9 +1,9 @@
 //remove
 /// <reference path="../../../dist/types.d.ts" />
-const { Horse } = require("core/Horse")
-const { Race } = require("core/Race")
-const { EffectType } = require("core/types")
-const { HippodamiaRandomEventManager } = require("hippodamia")
+const {Horse} = require("core/Horse")
+const {Race} = require("core/Race")
+const {EffectType} = require("core/types")
+const {HippodamiaRandomEventManager} = require("hippodamia")
 
 //remove
 
@@ -22,7 +22,6 @@ const { HippodamiaRandomEventManager } = require("hippodamia")
  */
 
 
-
 /**
  * woohoo buff
  * @type {Buff}
@@ -35,8 +34,8 @@ const wohoo_buff = {
     modifier: (target, buff) => {
         //提升选手1点速度,5%幸运和5%效果抵抗
         target.speed += 1 * buff.stacks
-        target.luck += 0.05*buff.stacks
-        target.effect_resistance += 0.05*buff.stacks
+        target.luck += 0.05 * buff.stacks
+        target.effect_resistance += 0.05 * buff.stacks
         target.display = `<芜湖之力:${buff.stacks}层>` + target.display
         return target
     }
@@ -124,7 +123,7 @@ const ultrafast_dark_woohoo = {
             },
             listeners: {
                 'buff.end': (ctx) => {
-                    ctx.horse.Property = {...ctx.horse.Property,status:1}
+                    ctx.horse.Property = {...ctx.horse.Property, status: 1}
                     console.debug('选手死亡')
                 }
             }
@@ -174,7 +173,7 @@ const shadows_woohoo = {
                 return target;
             },
             listeners: {
-                'horse.round.end': (race,horse) => {
+                'horse.round.end': (race, horse) => {
                     if (Math.random() < 0.5) {
                         horse.move(1);
                         race.pushLog(horse, '万寂逝影!千锋断绝!%player%前进了1格!');
@@ -218,10 +217,10 @@ const woohoo_staff_v12 = {
     handler: (race, horse) => {
         horse.buffContainer.add(wohoo_buff, 99, 1)
         const effects = [
-            { desc: '获得了加速魔法,速度永久提升1', handler: () => horse.Property.speed += 1 },
-            { desc: '获得了加加速魔法,速度永久提升2', handler: () => horse.Property.speed += 2 },
-            { desc: '获得了抵抗魔法,效果抵抗永久提升10%', handler: () => horse.Property.effect_resistance += 0.1 },
-            { desc: '获得了步数提升魔法,前进一格1', handler: () => horse.step += 1 },
+            {desc: '获得了加速魔法,速度永久提升1', handler: () => horse.Property.speed += 1},
+            {desc: '获得了加加速魔法,速度永久提升2', handler: () => horse.Property.speed += 2},
+            {desc: '获得了抵抗魔法,效果抵抗永久提升10%', handler: () => horse.Property.effect_resistance += 0.1},
+            {desc: '获得了步数提升魔法,前进一格1', handler: () => horse.step += 1},
         ];
         const randomEffect = effects[Math.floor(Math.random() * effects.length)];
         randomEffect.handler();
@@ -241,7 +240,7 @@ const woohoo_coffee = {
     type: 0, // Positive
     desc: '超验芜湖左旋咖啡,令人倍感精神',
     handler: (race, horse) => {
-        horse.Property = { ...horse.Property, speed: horse.Property.speed + 3 };
+        horse.Property = {...horse.Property, speed: horse.Property.speed + 3};
         race.pushLog(horse, '%player%喝下了一杯芜湖咖啡,感觉精神倍加,速度提升!');
     }
 }
@@ -290,26 +289,26 @@ const luckyCatEvent = {
     alias: "芜湖小猫",
     type: 0, // Positive
     desc: "小猫看了你一眼赐予了你速度+99效果，持续4回合",
-    handler: function(race, horse) {
+    handler: function (race, horse) {
         horse.buffContainer.add(wohoo_buff, 99, 1)
-      
-      horse.buffContainer.add({
-              name: '芜湖小猫祝福',
-              type: 0,  // Positive
-              desc: '芜湖小猫的祝福：速度增加',
-              priority: 1,
-              modifier: (target, buff) => {
-                  target.speed += 99;
-                  target.display = `<喵:${buff.remains}>` + target.display
-                  return target
-              }
-      }, 4);  // buff 持续 4 rounds
-      
-      race.pushLog(horse, "%player%被WOOHOO小猫看了一眼,获得了持续4回合的速度+99效果");
-  
+
+        horse.buffContainer.add({
+            name: '芜湖小猫祝福',
+            type: 0,  // Positive
+            desc: '芜湖小猫的祝福：速度增加',
+            priority: 1,
+            modifier: (target, buff) => {
+                target.speed += 99;
+                target.display = `<喵:${buff.remains}>` + target.display
+                return target
+            }
+        }, 4);  // buff 持续 4 rounds
+
+        race.pushLog(horse, "%player%被WOOHOO小猫看了一眼,获得了持续4回合的速度+99效果");
+
     }
-  };
-  
+};
+
 /**
  * 这才是wohoo起飞
  * @type {RandomEvent}
@@ -328,14 +327,14 @@ const wohooTakeoffEvent = {
 
         // 找到身后的选手并-2步数
         const others = race.getOthers([horse]);
-        others.sort((player1, player2) => player2.step - player1.step); 
-        const horseBehind = others.filter( player => player.step < horse.step );
-        if(horseBehind){
+        others.sort((player1, player2) => player2.step - player1.step);
+        const horseBehind = others.filter(player => player.step < horse.step);
+        if (horseBehind) {
             horseBehind.forEach(player => {
                 player.move(-2)
-                race.pushLog(player,`${player.raw_display}被滚滚热浪击退，步数减2！`);
+                race.pushLog(player, `${player.raw_display}被滚滚热浪击退，步数减2！`);
             });
-            
+
         }
     }
 }
@@ -354,22 +353,21 @@ const tripleWoohooEvent = {
         // 找到身后的选手
         const others = race.getOthers([horse]);
         others.sort((player1, player2) => player2.step - player1.step);  // Sort players by steps in decreasing order
-        const horsesBehind = others.filter( player => player.step < horse.step );
+        const horsesBehind = others.filter(player => player.step < horse.step);
         //horse.play()
         // 对最多三个身后的选手赋予「芜湖之力」
         const buffsCount = Math.min(3, horsesBehind.length);
-        for (let i = 0; i < buffsCount; i++ ){
+        for (let i = 0; i < buffsCount; i++) {
             horsesBehind[i].buffContainer.add(wohoo_buff, 1);
             race.pushLog(horsesBehind[i], `%player%高呼三声芜湖!赐予了${horsesBehind[i].raw_display}芜湖之力!`);
         }
 
         // 如果身后的选手少于三位，为当前选手赋予额外的「芜湖之力」
-        if (horsesBehind.length < 3){
+        if (horsesBehind.length < 3) {
             const extraBuff = 3 - horsesBehind.length;
             horse.buffContainer.add(wohoo_buff, extraBuff);
             race.pushLog(horse, '%player%高呼三声芜湖!自身额外获得' + extraBuff + '层芜湖之力');
         }
-      
     }
 }
 

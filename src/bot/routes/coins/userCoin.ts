@@ -3,6 +3,8 @@ import {CommandRouter} from "../../../types";
 
 export const queryUserCoins: CommandRouter =
     async (ctx) => {
+    //  获取用户信息
+    ctx.logger.info('[queryUserCoins]  用户查询自己的小马积分')
         const usr = new UserDataService(ctx.user.id)
         ctx.reply(
             [
