@@ -1,9 +1,9 @@
 export function raceCreatedTemplate(mode: string = 'pure') {
 
     const map = {
-        'pure': '纯净',
+        'pure': '纯净赛场',
         'random': '随机事件',
-        'contract': '契约'
+        'contract': '契约之战'
     }
 
     return [

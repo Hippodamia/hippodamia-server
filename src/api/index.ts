@@ -1,15 +1,19 @@
 import fastify from "fastify";
-import {UserDataService} from "../bot/services/userDataService";
+import {UserDataService} from "../data/userDataService";
 import groups_settings from "./groups_settings";
+
 const app = fastify();
 
-app.get<{Params: {user: string}}>('/api/coins/<user>', async (request, reply) => {
+app.get<{ Params: { user: string } }>('/api/coins/<user>', async (request, reply) => {
     const _user = request.params.user
-    const info =  await new UserDataService(_user).getUserInfo();
-    return {user:{id:info.id,nick:info.nick,qq:info.qqId},coins:info.coins}
+    const info = await new UserDataService(_user).getUserInfo();
+
+    const {id, nick, qqId, coins} = info
+
+    return {user: {id, nick, qqId}, coins}
 })
 
-app.put<{Params: {user: string}}>('/api/coins/<user>/<amount>', async (request, reply) => {
+app.put<{ Params: { user: string } }>('/api/coins/<user>/<amount>', async (request, reply) => {
     const _user = request.params.user
     const u = new UserDataService(_user);
 })
@@ -17,8 +21,9 @@ app.put<{Params: {user: string}}>('/api/coins/<user>/<amount>', async (request, 
 app.register(groups_settings)
 
 
-async  function startListen(){
-    console.log('runned')
+async function startListen() {
+    console.log('[Hippodamia Server]服务启动于127.0.0.1:8893')
     await app.listen({port: 8893, host: '127.0.0.1'})
 }
-export { startListen }
+
+export {startListen}

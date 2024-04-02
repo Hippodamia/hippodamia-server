@@ -4,12 +4,9 @@ import * as fs from 'node:fs';
 
 export class GroupSettingsManager {
     static settings: { 'global': GameSettings, [key: string]: GameSettings } = {'global': {}}
-
-
     public static reload() {
         GroupSettingsManager.load()
     }
-
     public static get(key?: string) {
         if (key == undefined || GroupSettingsManager.settings[key] == undefined)
             return GroupSettingsManager.settings['global']

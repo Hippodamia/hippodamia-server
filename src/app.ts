@@ -5,7 +5,6 @@ import {startListen} from './api'
 import {readShops} from "./bot/services/configService";
 import {HippodamiaRandomEventManager, i18n} from "./hippodamia";
 
-import 'reflect-metadata'
 import {doTest} from "./test";
 import {Race} from "./core/Race";
 import {randomEmoji} from "./utils";
@@ -20,6 +19,21 @@ import {SandboxAdapter} from "@hippodamia/adapter-sandbox";
 const bot = new Bot({loggerLevel: 'debug'});
 
 
+const RouteWithGroup = (router: CommandRouter): CommandRouter => {
+    return (ctx) => {
+        if (!ctx.channel) {
+            ctx.reply(i18n['bot.require_channel'])
+        } else {
+            router(ctx)
+        }
+    }
+}
+
+/**
+ * 包裹必须开启的
+ * @param router
+ * @constructor
+ */
 const RouteWithEnabled = (router: CommandRouter): CommandRouter => {
     return (ctx) => {
         if (GroupSettingsManager.get(ctx.channel?.id ?? 'global').enable) {
@@ -31,10 +45,10 @@ const RouteWithEnabled = (router: CommandRouter): CommandRouter => {
 }
 const RouteWithPermission = (router: CommandRouter): CommandRouter => {
     return (ctx) => {
-        if (GroupSettingsManager.getAdminList(ctx.channel!.id).includes(ctx.user.id.toString())) {
+        if (GroupSettingsManager.getAdminList(ctx.channel?.id).includes(ctx.user.id.toString())) {
             router(ctx)
         } else {
-            ctx.logger.debug(JSON.stringify(GroupSettingsManager.getAdminList(ctx.channel!.id)))
+            ctx.logger.debug(JSON.stringify(GroupSettingsManager.getAdminList(ctx.channel?.id)))
             return ctx.reply(i18n['bot.no_permission'])
         }
     }
@@ -43,16 +57,16 @@ const RouteWithPermission = (router: CommandRouter): CommandRouter => {
 //指令树路由
 bot.cmd('/小马积分', RouteWithEnabled(Routers.queryUserCoins))
 
-bot.cmd('/创建赛马 <mode>', RouteWithEnabled(Routers.createRace))
-bot.cmd('/race create <mode>', RouteWithEnabled(Routers.createRace))
+bot.cmd('/创建赛马 <mode>', RouteWithEnabled(RouteWithGroup(Routers.createRace)))
+bot.cmd('/race create <mode>', RouteWithEnabled(RouteWithGroup(Routers.createRace)))
 
-bot.cmd({command: '/dev fake player <count>'}, RouteWithEnabled(Routers.addFakePlayer))
+bot.cmd({command: '/dev fake player <count>'}, RouteWithEnabled(RouteWithGroup(Routers.addFakePlayer)))
 
-bot.cmd('/race join <nick>', RouteWithEnabled(Routers.joinRace))
-bot.cmd('/加入赛马 <nick>', RouteWithEnabled(Routers.joinRace))
+bot.cmd('/race join <nick>', RouteWithEnabled(RouteWithGroup(Routers.joinRace)))
+bot.cmd('/加入赛马 <nick>', RouteWithEnabled(RouteWithGroup(Routers.joinRace)))
 
-bot.cmd('/race start', RouteWithEnabled(Routers.startRace))
-bot.cmd('/开始赛马', RouteWithEnabled(Routers.startRace))
+bot.cmd('/race start', RouteWithEnabled(RouteWithGroup(Routers.startRace)))
+bot.cmd('/开始赛马', RouteWithEnabled(RouteWithGroup(Routers.startRace)))
 
 bot.cmd('/shops <page>', RouteWithEnabled(Routers.showShops))
 bot.cmd('/小马商店 <page>', RouteWithEnabled(Routers.showShops))
@@ -104,7 +118,7 @@ class MockAdapter implements Adapter {
 //bot.load(new MockAdapter())
 
 //bot.load(new OPQAdapter('198.18.0.1:8086'))
-bot.load(new SandboxAdapter('reverse'))
+bot.load(new SandboxAdapter("reverse"))
 
 // 获取传递进来的参数
 const args = process.argv.slice(2);

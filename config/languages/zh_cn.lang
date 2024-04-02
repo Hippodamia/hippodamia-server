@@ -30,3 +30,6 @@ bot.status_disabled = 本群已关闭赛马bot能力\n- 请联系本群bot管理
 bot.disabled = [Hippodamia]成功关闭赛马能力!
 bot.enabled = [Hippodamia]成功开启赛马能力!
 bot.reloaded = [Hippodamia]分群配置重载成功!
+
+# 群组必须!
+bot.require_channel = 此命令只能在群组中使用!

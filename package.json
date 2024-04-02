@@ -1,34 +1,26 @@
 {
-  "name": "hippodamia-server",
-  "version": "1.0.1",
-  "description": "",
-  "main": "index.js",
+  "name": "tes",
+  "module": "index.ts",
+  "type": "module",
   "scripts": {
-    "test": "ts-node src/test.ts",
-    "dev": "ts-node src/app.ts"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@hippodamia/adapter-gocqhttp": "file:..\\adapters\\adapter-gocqhttp",
-    "@hippodamia/adapter-sandbox": "file:..\\adapters\\adapter-sandbox",
-    "@hippodamia/bot": "file:.yalc/@hippodamia/bot",
-    "@types/sqlite3": "^3.1.11",
-    "axios": "^1.6.2",
-    "better-sqlite3": "^8.7.0",
-    "eventemitter3": "^5.0.1",
-    "fastify": "^4.25.2",
-    "json5": "^2.2.3",
-    "reflect-metadata": "^0.2.1",
-    "sqlite3": "^5.1.6",
-    "typeorm": "^0.3.19",
-    "ws": "^8.15.1"
+    "db:studio": "drizzle-kit studio",
+    "test": "bun test",
+    "dev": "bun --hot run src/app.ts"
   },
   "devDependencies": {
-    "@types/node": "^20.10.5",
-    "@types/ws": "^8.5.10",
-    "ts-node": "^10.9.2",
-    "typescript": "5.4.0-dev.20240106"
+    "@types/bun": "latest",
+    "drizzle-kit": "^0.20.14"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@hippodamia/adapter-sandbox": "^0.1.0-beta",
+    "@hippodamia/bot": "^1.1.2",
+    "better-sqlite3": "^9.4.3",
+    "drizzle-orm": "^0.30.6",
+    "eventemitter3": "^5.0.1",
+    "fastify": "^4.26.2",
+    "json5": "^2.2.3"
   }
 }

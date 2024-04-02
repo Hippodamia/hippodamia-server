@@ -1,0 +1,17 @@
+{
+  "716626916": {
+    "enable": true,
+    "admins": []
+  },
+  "941854786": {
+    "enable": true,
+    "admins": []
+  },
+  "global": {
+    "enable": true,
+    "admins": [
+      "1767407822",
+      "2413502512"
+    ]
+  }
+}

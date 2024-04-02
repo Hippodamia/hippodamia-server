@@ -2,12 +2,14 @@
   "version": "v1",
   "packages": {
     "@hippodamia/bot": {
-      "signature": "5ac149d7a582a08671e26c20a380fa0c",
-      "file": true
+      "signature": "fb6d2e42c859d7bbd97655fed19bb0b8",
+      "file": true,
+      "replaced": "file:.yalc\\@hippodamia\\bot"
     },
     "@hippodamia/adapter-sandbox": {
-      "signature": "8af1698781ddcba2febd4807fbc2df53",
-      "file": true
+      "signature": "48164786ea38ee5d4b7e8f5c1f0329f3",
+      "file": true,
+      "replaced": "file:..\\adapters\\adapter-sandbox"
     }
   }
 }

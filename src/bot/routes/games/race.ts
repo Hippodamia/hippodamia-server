@@ -1,22 +1,47 @@
 import roomService from "../../services/RoomService";
-import { Race } from "../../../core/Race";
-import { playerJoinedTemplate, raceCreatedTemplate } from "../../templates/raceTemplate";
-import { randomUser } from "@hippodamia/bot";
-import { CommandRouter } from "../../../types";
-import { randomEmoji } from "../../../utils";
-import { i18n } from "../../../hippodamia";
+import {Race} from "../../../core/Race";
+import {playerJoinedTemplate, raceCreatedTemplate} from "../../templates/raceTemplate";
+import {randomUser} from "@hippodamia/bot";
+import {CommandRouter} from "../../../types";
+import {randomEmoji} from "../../../utils";
+import {i18n} from "../../../hippodamia";
+import {GroupSettingsManager} from "../../../managers/GroupSettingsManager";
 
 export const createRace: CommandRouter = async (ctx) => {
-    const cid = ctx.channel!.id;
 
-    const race = new Race({ speed: 10, length: 20, mode: ctx.args!.mode as any })
+    let mode = ctx.args!.mode;
+
+    // TODO 允许使用自定义模式
+
+    if (['pure', '纯净', 'random', '随机事件'].includes(mode)) {
+        // 将中文的模式转为英文
+        const map: { [key: string]: string[] } = {
+            'pure': ['纯净'],
+            'random': ['随机事件', '随机']
+        }
+        for (const key of Object.keys(map)) {
+            if (mode == key || map[key].includes(mode)) {
+                mode = key;
+            }
+        }
+    } else {
+        // TODO 根据MAP生成语句
+        ctx.reply(['当前仅支持以下模式:', '- 纯净(pure)', '- 随机事件(random)', '使用 /创建赛马 模式 来创建对应模式的赛场!(例如 /创建赛马 随机事件)'].join('\n'))
+        return;
+    }
+
+    const cfg = GroupSettingsManager.get(ctx.channel?.id)
+
+    // TODO 允许配置自定义赛场基础属性
+
+    const race = new Race({speed: 10, length: 20, mode: mode as any})
     try {
         roomService.createRoom({
             channelId: ctx.channel!.id,
             race,
             playerList: [],
         })
-        ctx.reply(raceCreatedTemplate(ctx.args!.mode))
+        ctx.reply(raceCreatedTemplate(mode))
     } catch (e) {
         if (e === 'cd limit') {
             ctx.reply('游戏冷却未结束')
@@ -47,7 +72,6 @@ export const addFakePlayer = async (ctx) => {
     const count = Number(ctx.args.count) ?? 1;
 
     let added = 0;
-
 
 
     for (let i = 0; i < count; i++) {

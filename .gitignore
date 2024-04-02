@@ -6,6 +6,3 @@ node_modules
 # IDE and editors
 .vscode
 .idea
-
-# Config Files
-/config/

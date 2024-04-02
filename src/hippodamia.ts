@@ -29,22 +29,7 @@ export class HippodamiaRandomEventManager {
 
     static loadRandomEvents() {
         const scriptDirectory = path.join(__dirname, 'config/scripts');
-
-/*        readFilesRecursive('./config/scripts',
-            (file) => {
-                const filePath = path.join(scriptDirectory, file);
-                console.log('[REM]Loading script file:', filePath);
-                if (path.extname(filePath) === '.js') {
-                    try {
-                        require(filePath);
-                    } catch (error) {
-                        console.error('Failed to load script file:', filePath, error);
-                    }
-                }
-            })*/
-
         getFilesRecursively(path.resolve('./config/scripts')).forEach((file) => {
-
             if (path.extname(file) === '.js') {
                 try {
                     let text = fs.readFileSync(file).toString();

@@ -1,12 +1,10 @@
-import {DataSource} from "typeorm";
-import {BuffRecord, RaceRanking, RaceRecord, RandomEventRecord, User} from "./entity";
-import path from "path";
+import {drizzle} from 'drizzle-orm/bun-sqlite';
+import {Database} from 'bun:sqlite';
+import * as path from "node:path";
 
-export const AppDataSource = new DataSource({
-    type: "sqlite",
-    database: path.resolve('./config/dev.sqlite'),
-    synchronize: true,
-    entities: [User, RaceRanking,RaceRecord,RandomEventRecord,BuffRecord],
-})
 
-AppDataSource.initialize()
+const sqlite =
+    new Database(path.resolve('./config/dev.sqlite'))
+const db = drizzle(sqlite);
+
+export default db;
