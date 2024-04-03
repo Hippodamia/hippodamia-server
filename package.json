@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@hippodamia/adapter-sandbox": "^0.1.0-beta",
-    "@hippodamia/bot": "^1.1.2",
     "better-sqlite3": "^9.4.3",
     "drizzle-orm": "^0.30.6",
     "eventemitter3": "^5.0.1",
