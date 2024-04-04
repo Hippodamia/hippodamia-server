@@ -1,4 +1,4 @@
-import {Race} from "./core/Race";
+import {Race} from "@hippodamia/core";
 import {Context} from "@hippodamia/bot";
 
 export interface PlayerInfo {

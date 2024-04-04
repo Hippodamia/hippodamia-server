@@ -1,7 +1,9 @@
-import {Race} from "./core/Race";
-import {Horse} from "./core/Horse";
+import { Race,Horse } from "@hippodamia/core";
+import { Bot } from "@hippodamia/bot";
+
+
 import path from "path";
-import {I18n, getFilesRecursively, readFilesRecursive} from "./utils";
+import { I18n, getFilesRecursively } from "./utils";
 import fs from "fs";
 
 export class HippodamiaRandomEventManager {
@@ -9,7 +11,7 @@ export class HippodamiaRandomEventManager {
 
     static register(event: RandomEvent) {
         this.events.set(event.name, event);
-        console.log('[REM]Register random event: ' + event.name +'|' +event.alias);
+        console.log('[REM]Register random event: ' + event.name + '|' + event.alias);
     }
 
     static get(name: string) {
@@ -21,7 +23,7 @@ export class HippodamiaRandomEventManager {
     }
 
 
-    static getRandom(){
+    static getRandom() {
         const events = Array.from(this.events.keys());
         const index = Math.floor(Math.random() * events.length);
         return this.get(events[index]);
@@ -61,4 +63,20 @@ export enum RandomEventType {
 }
 
 
-export const i18n = new I18n('zh_cn', './config/languages');
+
+
+export class Hippodamia {
+
+    static instance: Hippodamia
+
+    i18n: I18n
+
+    bot : Bot
+    constructor(bot:Bot) {
+        Hippodamia.instance = this;
+        this.bot = bot;
+        this.i18n = new I18n('zh_cn', './config/languages');
+    }
+
+}
+

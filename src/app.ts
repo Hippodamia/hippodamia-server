@@ -3,11 +3,8 @@ import {paginationTemplate} from "./bot/templates/commonTemplate";
 
 import {startListen} from './api'
 import {readShops} from "./bot/services/configService";
-import {HippodamiaRandomEventManager, i18n} from "./hippodamia";
+import {Hippodamia, HippodamiaRandomEventManager, i18n} from "./hippodamia";
 
-import {doTest} from "./test";
-import {Race} from "./core/Race";
-import {randomEmoji} from "./utils";
 import {GroupSettingsManager} from './managers/GroupSettingsManager';
 import {CommandRouter} from './types';
 
@@ -120,48 +117,7 @@ class MockAdapter implements Adapter {
 //bot.load(new OPQAdapter('198.18.0.1:8086'))
 bot.load(new SandboxAdapter("reverse"))
 
-// 获取传递进来的参数
-const args = process.argv.slice(2);
-switch (args[0]) {
-    case 'test_random_events':
+new Hippodamia(bot);
 
-        //检查所有的事件
-        Array.from(HippodamiaRandomEventManager.getEventNames()).forEach(eventName => {
-
-            const event = HippodamiaRandomEventManager.get(eventName)!
-            console.log(`正在测试:${event.name}(${event.alias})`)
-            try {
-                const race = new Race({speed: 10, length: 20, mode: 'random'})
-                '0'.repeat(6).split('').forEach(x => {
-                    race.join(randomUser(), randomEmoji());
-                })
-                race.start()
-                for (let i = 0; i < 7; i++) {
-                    //随机设置每一个选手的位置,并执行时间
-                    race.getHorses().forEach(x => {
-                        x.step = Math.floor(Math.random() * 20);
-                        event.handler(race, x);
-                    })
-                }
-
-
-            } catch (e) {
-                console.log('\x1b[31m%s\x1b[0m', '问题:' + e)
-            }
-            console.log(`测试完成:${event.name}(${event.alias})`)
-
-        })
-
-        break;
-    case 'test':
-        doTest().then()
-        break;
-    case 'app':
-        break;
-}
-//自带的coins api
 startListen().then().catch(e => console.log(e));
 
-//
-
-export {bot}
