@@ -1,20 +1,24 @@
-import {Adapter, Bot, randomUser} from '@hippodamia/bot'
-import {paginationTemplate} from "./bot/templates/commonTemplate";
+import { Adapter, Bot, randomUser } from '@hippodamia/bot'
+import { paginationTemplate } from "./bot/templates/commonTemplate";
 
-import {startListen} from './api'
-import {readShops} from "./bot/services/configService";
-import {Hippodamia, HippodamiaRandomEventManager, i18n} from "./hippodamia";
+import { startListen } from './api'
+import { readShops } from "./bot/services/configService";
+import { Hippodamia } from "./hippodamia";
 
-import {GroupSettingsManager} from './managers/GroupSettingsManager';
-import {CommandRouter} from './types';
+import { GroupSettingsManager } from './managers/GroupSettingsManager';
+import { CommandRouter } from './types';
 
 //所有的命令路由
 import * as Routers from './bot/routes'
-import {SandboxAdapter} from "@hippodamia/adapter-sandbox";
+//import { SandboxAdapter } from "@hippodamia/adapter-sandbox";
+import ServerSettingsManager from './managers/ServerSettingsManager';
+import { OneBotAdapter } from './OnebotAdapter';
+import { RandomEventManager } from './components/random-events/RandomEventManager';
 
 
-const bot = new Bot({loggerLevel: 'debug'});
+const bot = Hippodamia.instance.bot;
 
+const i18n = Hippodamia.instance.i18n;
 
 const RouteWithGroup = (router: CommandRouter): CommandRouter => {
     return (ctx) => {
@@ -33,7 +37,9 @@ const RouteWithGroup = (router: CommandRouter): CommandRouter => {
  */
 const RouteWithEnabled = (router: CommandRouter): CommandRouter => {
     return (ctx) => {
-        if (GroupSettingsManager.get(ctx.channel?.id ?? 'global').enable) {
+        const gsm = GroupSettingsManager.instance;
+
+        if (gsm.get(ctx.channel?.id ?? 'global').enable) {
             router(ctx)
         } else {
             ctx.reply(i18n['bot.status_disabled'])
@@ -42,10 +48,11 @@ const RouteWithEnabled = (router: CommandRouter): CommandRouter => {
 }
 const RouteWithPermission = (router: CommandRouter): CommandRouter => {
     return (ctx) => {
-        if (GroupSettingsManager.getAdminList(ctx.channel?.id).includes(ctx.user.id.toString())) {
+        const gsm = GroupSettingsManager.instance;
+        if (gsm.getAdminList(ctx.channel?.id).includes(ctx.user.id.toString())) {
             router(ctx)
         } else {
-            ctx.logger.debug(JSON.stringify(GroupSettingsManager.getAdminList(ctx.channel?.id)))
+            ctx.logger.debug(JSON.stringify(gsm.getAdminList(ctx.channel?.id)))
             return ctx.reply(i18n['bot.no_permission'])
         }
     }
@@ -57,7 +64,7 @@ bot.cmd('/小马积分', RouteWithEnabled(Routers.queryUserCoins))
 bot.cmd('/创建赛马 <mode>', RouteWithEnabled(RouteWithGroup(Routers.createRace)))
 bot.cmd('/race create <mode>', RouteWithEnabled(RouteWithGroup(Routers.createRace)))
 
-bot.cmd({command: '/dev fake player <count>'}, RouteWithEnabled(RouteWithGroup(Routers.addFakePlayer)))
+bot.cmd({ command: '/dev fake player <count>' }, RouteWithEnabled(RouteWithGroup(Routers.addFakePlayer)))
 
 bot.cmd('/race join <nick>', RouteWithEnabled(RouteWithGroup(Routers.joinRace)))
 bot.cmd('/加入赛马 <nick>', RouteWithEnabled(RouteWithGroup(Routers.joinRace)))
@@ -73,7 +80,7 @@ for (const shop of readShops()) {
     bot.cmd(`/${shop.name} <page>`, RouteWithEnabled(Routers.showShopItems))
 }
 
-bot.cmd('/hippodamia reload', RouteWithPermission(Routers.hippodamiaRoutes.reloadConfig))
+bot.cmd('/hippodamia reload', RouteWithPermission(Routers.hippodamiaRoutes['reloadConfig']))
 bot.cmd('/hippodamia off', RouteWithPermission(Routers.hippodamiaRoutes.off))
 bot.cmd('/hippodamia on', RouteWithPermission(Routers.hippodamiaRoutes.on))
 bot.cmd('/hippodamia config', RouteWithPermission(Routers.hippodamiaRoutes.showGroupConfig))
@@ -90,34 +97,35 @@ bot.cmd('/wiki event list <page>', (ctx) => {
     }, "/wiki event list <page>"))
 })
 
-//载入核心数据
-//载入scripts
-HippodamiaRandomEventManager.loadRandomEvents()
-//载入群组配置
-GroupSettingsManager.reload()
 bot.cmd('/ping <str>', (ctx) => {
     console.log(ctx.args!.str)
     ctx.reply('pong' + ctx.args!.str)
 })
 
+//载入核心数据
+//载入scripts
+new RandomEventManager()
+RandomEventManager.instance.loadRandomEvents()
 
-class MockAdapter implements Adapter {
-    info = {desc: '', name: 'mock', version: '1'};
-
-    send(content: string | string[], target: { channel?: string; user?: string }) {
-        console.log("bot:\n" + content);
-    };
-
-    init(bot: Bot) {
-    }
-}
-
-//bot.load(new MockAdapter())
 
 //bot.load(new OPQAdapter('198.18.0.1:8086'))
-bot.load(new SandboxAdapter("reverse"))
 
-new Hippodamia(bot);
+
+
+
+const settings = ServerSettingsManager.instance.settings
+
+switch (settings.mode) {
+    case 'onebot':
+        bot.load(new OneBotAdapter(settings.onebot))
+    case 'test':
+        //@ts-ignore
+        //bot.load(new SandboxAdapter("reverse"))
+}
+
+
+
+
 
 startListen().then().catch(e => console.log(e));
 

@@ -1,5 +1,5 @@
 import roomService from "../../services/RoomService";
-import {Race} from "../../../core/Race";
+import {Race} from "@hippodamia/core";
 import {raceCreatedTemplate} from "../../templates/raceTemplate";
 import {paginationTemplate} from "../../templates/commonTemplate";
 import {CommandRouter} from "../../../types";
@@ -19,7 +19,7 @@ export const showShops:CommandRouter =  async (ctx) => {
 
 export const showShopItems:CommandRouter =  async (ctx:Context) => {
     const cid = ctx.channel!.id;
-    const shop_name =  ctx.command.name
+    const shop_name =  ctx.command!.name
     //read json from './data/shops/*.json'
     const shops = readShops();
 

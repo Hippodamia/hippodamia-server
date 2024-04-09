@@ -1,7 +1,8 @@
-import { HipComponent, Horse, IContentManager, Race } from '@hippodamia/core'
+import { HipComponent, HipEmitterTypes, Horse, IContentManager, Race } from '@hippodamia/core'
 import { RandomEvent } from './types';
+import EventEmitter from 'eventemitter3';
 
-export class RandomEventComponent extends HipComponent {
+export class RandomEventComponent extends EventEmitter<HipEmitterTypes> {
     constructor(manager: IContentManager<RandomEvent>) {
         super();
 
@@ -25,6 +26,7 @@ export class RandomEventComponent extends HipComponent {
             alias: ['RandomEvent']
         }
     }
+    name = 'RandomEvent'
 }
 
 

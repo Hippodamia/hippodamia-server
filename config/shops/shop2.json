@@ -1,0 +1,25 @@
+{
+    "name": "马术天堂",
+    "description": "为赛马和马术冒险提供刺激的一站式服务。",
+    "items": [
+      {
+        "name": "赛日礼帽",
+        "description": "穿戴这顶时尚的礼帽，走在赛马场上。",
+        "price": 25,
+        "discount": 10,
+        "type": "no_limit"
+      },
+      {
+        "name": "幸运马蹄铁",
+        "description": "用这个装饰性的马蹄铁为您心爱的马带来好运。",
+        "price": 15,
+        "type": "user_limit",
+        "limit": 3
+      },
+      {
+        "name": "赛场地图",
+        "description": "使用这张详细的地图像专业人士一样穿越赛马场。",
+        "price": 5
+      }
+    ]
+  }

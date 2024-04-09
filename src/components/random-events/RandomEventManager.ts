@@ -7,6 +7,17 @@ import * as fs from "node:fs"
 
 
 export class RandomEventManager implements IContentManager<RandomEvent> {
+
+    static instance: RandomEventManager;
+
+    constructor() {
+        if (RandomEventManager.instance) {
+            return RandomEventManager.instance;
+        }
+        RandomEventManager.instance = this;
+        this.loadRandomEvents();
+    }
+
     getRandom(filter: (content: RandomEvent) => boolean) {
 
         const events = Array.from(this.events.keys());
@@ -44,7 +55,7 @@ export class RandomEventManager implements IContentManager<RandomEvent> {
     }
 
     loadRandomEvents() {
-        const root = packageDirectorySync();
+        const root = packageDirectorySync() + '/config/scripts/random_events';
         if (root) {
             getFilesRecursively(root).forEach((file) => {
                 if (path.extname(file) === '.js') {

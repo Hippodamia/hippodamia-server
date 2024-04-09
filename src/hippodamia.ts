@@ -1,82 +1,19 @@
-import { Race,Horse } from "@hippodamia/core";
 import { Bot } from "@hippodamia/bot";
 
-
-import path from "path";
-import { I18n, getFilesRecursively } from "./utils";
-import fs from "fs";
-
-export class HippodamiaRandomEventManager {
-    static events: Map<string, RandomEvent> = new Map();
-
-    static register(event: RandomEvent) {
-        this.events.set(event.name, event);
-        console.log('[REM]Register random event: ' + event.name + '|' + event.alias);
-    }
-
-    static get(name: string) {
-        return this.events.get(name);
-    }
-
-    static getEventNames() {
-        return this.events.keys();
-    }
-
-
-    static getRandom() {
-        const events = Array.from(this.events.keys());
-        const index = Math.floor(Math.random() * events.length);
-        return this.get(events[index]);
-    }
-
-    static loadRandomEvents() {
-        const scriptDirectory = path.join(__dirname, 'config/scripts');
-        getFilesRecursively(path.resolve('./config/scripts')).forEach((file) => {
-            if (path.extname(file) === '.js') {
-                try {
-                    let text = fs.readFileSync(file).toString();
-                    const result = text.replace(/\/\/remove([\s\S]*?)\/\/remove/g, '');
-                    eval(result);
-                    console.log('[REM]Loaded script file:', file);
-                } catch (error) {
-                    console.error('Failed to load script file:', file, error);
-                }
-            }
-        })
-
-    }
-
-}
-
-export interface RandomEvent {
-    name: string; //唯一name使用系列.xxx来确定
-    alias: string;//别名，用于中文的表示
-    type: RandomEventType;
-    desc: string,//简化的描述
-    handler: (race: Race, horse: Horse) => void
-}
-
-export enum RandomEventType {
-    Positive,
-    Negative,
-    Neutral,
-}
-
-
+import { I18n } from "./utils";
+import ServerSettingsManager from "./managers/ServerSettingsManager";
 
 
 export class Hippodamia {
 
-    static instance: Hippodamia
+    static instance: Hippodamia = new Hippodamia();
 
-    i18n: I18n
+    i18n: I18n & { [key: string]: string; } = new I18n('zh_cn', './config/languages').build() as any
 
-    bot : Bot
-    constructor(bot:Bot) {
-        Hippodamia.instance = this;
-        this.bot = bot;
-        this.i18n = new I18n('zh_cn', './config/languages');
+    bot: Bot = new Bot({ loggerLevel: ServerSettingsManager.instance.settings.logging.level })
+    constructor() {
+        if (Hippodamia.instance)
+            return Hippodamia.instance;
     }
 
 }
-

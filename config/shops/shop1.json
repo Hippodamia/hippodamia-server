@@ -1,0 +1,26 @@
+{
+    "name": "科技乐园",
+    "description": "您最新科技产品和创新的一站式购物地点。",
+    "items": [
+      {
+        "name": "智能眼镜",
+        "description": "通过这款尖端的智能眼镜体验增强现实。",
+        "price": 300,
+        "discount": 20,
+        "type": "global_limit",
+        "limit": 5
+      },
+      {
+        "name": "无人机配件套装",
+        "description": "用这个套装建造您自己的无人机，探索天空。",
+        "price": 150,
+        "type": "user_limit",
+        "limit": 2
+      },
+      {
+        "name": "科技爱好者杂志",
+        "description": "随时了解最新的科技新闻和趋势。",
+        "price": 10
+      }
+    ]
+  }

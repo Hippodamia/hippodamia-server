@@ -30,7 +30,7 @@ class RoomService {
         const index = this.rooms.findIndex(r => r.channelId === channelId);
         if (index !== -1) {
             this.rooms.splice(index, 1);
-            this.allow_time_room.set(channelId, Date.now() + (GroupSettingsManager.get(channelId)?.cd ?? 0));
+            this.allow_time_room.set(channelId, Date.now() + (GroupSettingsManager.instance.get(channelId)?.cd ?? 0));
         }
     }
 

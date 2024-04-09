@@ -1,7 +1,16 @@
 {
   "716626916": {
     "enable": true,
-    "admins": []
+    "admins": [],
+    "cd": 0,
+    "game": {
+      "dev-pure": {
+        "interval": 2,
+        "base_mode": "pure",
+        "length": 14,
+        "speed": 13
+      }
+    }
   },
   "941854786": {
     "enable": true,
@@ -9,9 +18,6 @@
   },
   "global": {
     "enable": true,
-    "admins": [
-      "1767407822",
-      "2413502512"
-    ]
+    "admins": ["1767407822", "2413502512"]
   }
 }

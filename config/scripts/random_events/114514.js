@@ -161,8 +161,8 @@ const sleepy_tea_bomb = {
     }
 };
 
-HippodamiaRandomEventManager.register(sleepy_red_tea)//昏睡红茶1.0
-HippodamiaRandomEventManager.register(improved_sleepy_red_tea)//昏睡红茶2.0
-HippodamiaRandomEventManager.register(infinite_red_tea)//infinite_red_tea
-HippodamiaRandomEventManager.register(yelling_on_floor)//哼哼啊啊啊
-HippodamiaRandomEventManager.register(sleepy_tea_bomb)//仙贝红茶炸弹递送员
+RandomEventManager.instance.register(sleepy_red_tea)//昏睡红茶1.0
+RandomEventManager.instance.register(improved_sleepy_red_tea)//昏睡红茶2.0
+RandomEventManager.instance.register(infinite_red_tea)//infinite_red_tea
+RandomEventManager.instance.register(yelling_on_floor)//哼哼啊啊啊
+RandomEventManager.instance.register(sleepy_tea_bomb)//仙贝红茶炸弹递送员

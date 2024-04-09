@@ -1,6 +1,6 @@
-import {users} from "./db/schema";
+import { users } from "./db/schema";
 import db from "./data-source";
-import {eq} from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 
 export class UserDataService {
     private platform_id: string;
@@ -11,11 +11,11 @@ export class UserDataService {
 
 
     async getUserCoins() {
-        return (await this.getUserInfo())?.coins;
+        return (await this.getUserInfo())?.coins ?? 0;
     }
 
     async getUserNick() {
-        return (await this.getUserInfo()).nick;
+        return (await this.getUserInfo())?.nick ?? '';
     }
 
     /**
@@ -50,7 +50,7 @@ export class UserDataService {
      */
     public async updateUserCoins(coins: number) {
         await db.update(users).set({
-            coins: await this.getUserCoins() + coins
+            coins: await this.getUserCoins() ?? 0 + coins
         }).where(eq(users.qqId, this.platform_id)).execute();
     }
 

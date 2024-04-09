@@ -1,11 +1,11 @@
 // routes.ts
 import { FastifyInstance } from 'fastify';
-import {GameSettings} from "../types";
+import {GroupSetting} from "../types";
 import * as fs from "fs";
 
 const filePath =  'config/groups_settings.json';
 
-const readGroupsSettings =  (): { [key: string]: GameSettings } => {
+const readGroupsSettings =  (): { [key: string]: GroupSetting } => {
     try {
         const content = fs.readFileSync(filePath, 'utf-8');
         return JSON.parse(content);
@@ -43,7 +43,7 @@ const routes = async (fastify: FastifyInstance) => {
     });
 
     // POST请求，添加群组及其配置
-    fastify.post<{ Body:  GameSettings,Params: { id: string } }>('/groups/:id', async (request, reply) => {
+    fastify.post<{ Body:  GroupSetting,Params: { id: string } }>('/groups/:id', async (request, reply) => {
         let groupsSettings = readGroupsSettings()
 
         const groupId = request.params.id;
@@ -66,7 +66,7 @@ const routes = async (fastify: FastifyInstance) => {
     });
 
     // PUSH请求，合并现有配置
-    fastify.put<{ Body:  GameSettings,Params: { id: string } }>('/groups/:id', async (request, reply) => {
+    fastify.put<{ Body:  GroupSetting,Params: { id: string } }>('/groups/:id', async (request, reply) => {
         let groupsSettings = readGroupsSettings()
 
 

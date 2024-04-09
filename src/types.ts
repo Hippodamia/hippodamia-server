@@ -1,5 +1,5 @@
-import {Race} from "@hippodamia/core";
-import {Context} from "@hippodamia/bot";
+import { Race } from "@hippodamia/core";
+import { Context } from "@hippodamia/bot";
 
 export interface PlayerInfo {
     userId: string,
@@ -39,20 +39,34 @@ export interface ShopItem {
     limit?: number
 }
 
-export type GameSettings = Partial<{
+export type GameModeSetting = Partial<{
+    /** 速度: 0-20 */
+    speed: number;
+    /** 最少玩家数量 */
+    min_player: number;
+    /** 最多玩家数量 */
+    max_player: number;
+    /** 赛道长度 */
+    length: number;
+    /** 幸运 */
+    luck: number;
+    /** 效果抵抗 */
+    effect_resistance: number;
+    /** 内容排除 */
+    exclude: string[];
+    /** 前置模式 */
+    base_mode: string,
+    /** 消息间隔 */
+    interval: number,
+    /** 别名 */ 
+    alias: string[]
+}>
+
+export type GroupSetting = Partial<{
     enable: boolean;
     admins: string[];
-    cd:number;
+    cd: number;
     game: {
-        [key: string]: Partial<{
-            speed: number;
-            min_player:number;
-            max_player:number;
-            length: number;
-            luck: number;
-            effect_resistance: number;
-            exclude: string[];
-            base_mode: string
-        }>;
+        [key: string]: GameModeSetting;
     };
 }>;

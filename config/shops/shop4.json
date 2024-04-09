@@ -1,0 +1,26 @@
+{
+    "name": "梗魔法商城",
+    "description": "发现最新的梗，为您的在线生活带来欢乐。",
+    "items": [
+      {
+        "name": "梗图T恤",
+        "description": "用这款幽默的T恤展示您的梗技能。",
+        "price": 20,
+        "type": "no_limit"
+      },
+      {
+        "name": "梗创作工具包",
+        "description": "使用这个创作包成为梗大师。",
+        "price": 30,
+        "type": "global_limit",
+        "limit": 7
+      },
+      {
+        "name": "猫咪梗抱枕",
+        "description": "拥抱这款受互联网最喜欢的猫咪启发的抱枕。",
+        "price": 12,
+        "type": "user_limit",
+        "limit": 4
+      }
+    ]
+  }

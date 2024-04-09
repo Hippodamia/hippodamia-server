@@ -1,40 +1,58 @@
-import roomService from "../../services/RoomService";
-import {Race} from "../../../core/Race";
-import {playerJoinedTemplate, raceCreatedTemplate} from "../../templates/raceTemplate";
-import {randomUser} from "@hippodamia/bot";
-import {CommandRouter} from "../../../types";
-import {randomEmoji} from "../../../utils";
-import {i18n} from "../../../hippodamia";
-import {GroupSettingsManager} from "../../../managers/GroupSettingsManager";
+import roomService from "@/bot/services/RoomService";
+import { Race } from "@hippodamia/core";
+import { playerJoinedTemplate, raceCreatedTemplate } from "@/bot/templates/raceTemplate";
+import { randomUser } from "@hippodamia/bot";
+import { CommandRouter } from "@/types";
+import { randomEmoji } from "@/utils";
+import { Hippodamia } from "@/hippodamia";
+import { GroupSettingsManager } from "@/managers/GroupSettingsManager";
+
+
+const i18n = Hippodamia.instance.i18n
 
 export const createRace: CommandRouter = async (ctx) => {
 
     let mode = ctx.args!.mode;
 
-    // TODO 允许使用自定义模式
+    //根据别名以及key获取直接mode，判断本群是否可以使用这个模式
+    const group_modes = GroupSettingsManager.instance.getModes(ctx.channel!.id)
+    const mode_names = [...Object.keys(group_modes), ...Object.values(group_modes).map(x => x.alias ?? []).flat(1)]
 
-    if (['pure', '纯净', 'random', '随机事件'].includes(mode)) {
-        // 将中文的模式转为英文
-        const map: { [key: string]: string[] } = {
-            'pure': ['纯净'],
-            'random': ['随机事件', '随机']
-        }
-        for (const key of Object.keys(map)) {
-            if (mode == key || map[key].includes(mode)) {
-                mode = key;
-            }
-        }
+    if (mode_names.includes(mode)) {
+        for (const key in group_modes)
+            if (key == mode || group_modes[key].alias?.includes(mode))
+                mode = key as any;
     } else {
-        // TODO 根据MAP生成语句
-        ctx.reply(['当前仅支持以下模式:', '- 纯净(pure)', '- 随机事件(random)', '使用 /创建赛马 模式 来创建对应模式的赛场!(例如 /创建赛马 随机事件)'].join('\n'))
+
+        const mode_lists = Object.keys(group_modes).map(key =>
+            `- ${key}(${(group_modes[key].alias?.join('|') ?? '')})`
+        )
+
+        console.log(mode_lists)
+
+        ctx.reply(['本群当前支持以下模式:', ...mode_lists, '使用 /创建赛马 模式 来创建对应模式的赛场!(例如 /创建赛马 随机事件)'].join('\n'))
         return;
     }
 
-    const cfg = GroupSettingsManager.get(ctx.channel?.id)
+    const cfg = group_modes[mode]
 
     // TODO 允许配置自定义赛场基础属性
 
-    const race = new Race({speed: 10, length: 20, mode: mode as any})
+
+    //将自定义mode根据base转为基础mode(random/pure)
+    while (!['pure', 'random'].includes(mode)) {
+        const base = group_modes[mode].base_mode
+        if (!base) {
+            ctx.reply(i18n['race.create.invalid_mode'])
+            return;
+        }
+        mode = base;
+    }
+
+
+
+    // todo 传入独立配置对象?
+    const race = new Race({ speed: 10, length: 20, mode: mode as any })
     try {
         roomService.createRoom({
             channelId: ctx.channel!.id,
@@ -54,6 +72,7 @@ export const createRace: CommandRouter = async (ctx) => {
 
 }
 
+/** 加入命令的路由 */
 export const joinRace: CommandRouter = async (ctx) => {
     const cid = ctx.channel!.id;
     if (roomService.getRoom(cid)) {
@@ -67,9 +86,10 @@ export const joinRace: CommandRouter = async (ctx) => {
     }
 }
 
-export const addFakePlayer = async (ctx) => {
-    const cid = ctx.channel.id;
-    const count = Number(ctx.args.count) ?? 1;
+/** fake player的路由 */
+export const addFakePlayer: CommandRouter = async (ctx) => {
+    const cid = ctx.channel!.id;
+    const count = Number(ctx.args!.count) ?? 1;
 
     let added = 0;
 
@@ -88,8 +108,9 @@ export const addFakePlayer = async (ctx) => {
     ctx.reply(`已添加虚拟选手:${added}位`)
 }
 
-export const startRace = async (ctx) => {
-    const cid = ctx.channel.id;
+/** 开始命令的路由 */
+export const startRace: CommandRouter = async (ctx) => {
+    const cid = ctx.channel!.id;
     if (roomService.getRoom(cid)) {
         const race = roomService.getRoom(cid)!.race;
         if (race.players.length <= 3) {
@@ -105,7 +126,7 @@ export const startRace = async (ctx) => {
                     try {
                         race.next()
                     } catch (e) {
-                        ctx.reply(i18n['race.task.error'].replace('%error%', e))
+                        ctx.reply(i18n['race.task.error'].replace('%error%', (e as Error).message))
                         ctx.reply('race ended and room removed')
                         roomService.removeRoom(cid)
                         resolve(true)
@@ -143,6 +164,8 @@ export const startRace = async (ctx) => {
     }
 }
 
+//todo 增加多平台不同的渲染方式
+/** 渲染当前比赛的文本 */ 
 function renderRace(race: Race): string {
     return [
         ...race.logs.map(x => x.content),

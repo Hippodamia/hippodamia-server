@@ -1,0 +1,27 @@
+{
+    "name": "宇宙奇迹",
+    "description": "通过天文主题产品踏上一场宇宙冒险。",
+    "items": [
+      {
+        "name": "星系背包",
+        "description": "用这款令人惊叹的星系印花背包携带宇宙。",
+        "price": 35,
+        "type": "no_limit"
+      },
+      {
+        "name": "星空投影仪",
+        "description": "使用这个投影仪将您的房间变成迷人的星空。",
+        "price": 50,
+        "discount": 20,
+        "type": "global_limit",
+        "limit": 10
+      },
+      {
+        "name": "天文学指南书",
+        "description": "通过这本全面的指南了解宇宙的奇迹。",
+        "price": 15,
+        "type": "user_limit",
+        "limit": 3
+      }
+    ]
+  }

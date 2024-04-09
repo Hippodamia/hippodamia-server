@@ -1,12 +1,13 @@
-import {UserDataService} from "../../../data/userDataService";
-import {CommandRouter} from "../../../types";
+import { UserDataService } from "../../../data/userDataService";
+import { CommandRouter } from "../../../types";
 
 export const queryUserCoins: CommandRouter =
     async (ctx) => {
         //  获取用户信息
-        ctx.logger.info('[queryUserCoins]用户查询自己的小马积分')
+        ctx.logger.info('[queryUserCoins] 用户查询自己的小马积分')
         const usr = new UserDataService(ctx.user.id)
 
+        ctx.logger.debug('[queryUserCoins] start query user coins:' + (await usr.getUserCoins()))
         ctx.reply(
             [
                 '😊嗨，好久不见!',

@@ -1,5 +1,6 @@
-import * as fs from 'fs';
-import {Shop} from "../../types";
+import * as fs from 'node:fs';
+import {Shop} from "@/types";
+import path from 'node:path';
 
 const readJsonFiles = (directory: string): any[] => {
     const files = fs.readdirSync(directory);
@@ -17,5 +18,5 @@ const readJsonFiles = (directory: string): any[] => {
 };
 
 export function readShops():Shop[]{
-    return readJsonFiles('./config/shops');
+    return readJsonFiles(path.resolve('./config/shops'));
 }

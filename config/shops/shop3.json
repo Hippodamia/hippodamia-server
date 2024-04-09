@@ -1,0 +1,27 @@
+{
+    "name": "时光之旅宝藏",
+    "description": "通过历史和未来的物品，踏上一场时光之旅。",
+    "items": [
+      {
+        "name": "复古拍立得相机",
+        "description": "用这款即时相机以复古风格记录回忆。",
+        "price": 40,
+        "discount": 5,
+        "type": "user_limit",
+        "limit": 5
+      },
+      {
+        "name": "未来感虚拟现实头盔",
+        "description": "用这款先进的头盔体验未来的虚拟现实。",
+        "price": 100,
+        "type": "global_limit",
+        "limit": 8
+      },
+      {
+        "name": "古代文物复制品",
+        "description": "用这些精心制作的文物复制品拥有历史的一部分。",
+        "price": 18
+      }
+    ]
+  }
+  

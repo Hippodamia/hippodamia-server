@@ -69,19 +69,46 @@ export const shuffle = (array: any[]) => {
   return array;
 };
 
+type I18nType = {
+  [key: string]: string;
+};
+
+
 export class I18n {
+  
   translations: Record<string, string>;
 
   constructor(language: string, directory: string) {
     const langFilePath = `${directory}/${language}.lang`;
 
     console.log(`Loading translations from ${langFilePath}`);
-    // Read the language file
+    
     const langFileContent = fs.readFileSync(langFilePath, "utf-8");
-
-    // Parse the language file
     this.translations = this.parseLanguageFile(langFileContent);
+  }
 
+  parseLanguageFile(content: string): Record<string, string> {
+    const translations: Record<string, string> = {};
+    const lines = content.split("\n");
+    for (const line of lines) {
+      if (line.trim() === "" || line.trim().startsWith("#")) {
+        continue;
+      }
+      const [key, value] = line.split("=");
+      const trimmedKey = key.trim();
+      translations[trimmedKey] = value.trim().replace(/%space%/g, " ");
+    }
+    return translations;
+  }
+
+  translate(key: string): string {
+    if (this.translations.hasOwnProperty(key)) {
+      return this.translations[key].replace(/\\n/g, "\n");
+    }
+    return key;
+  }
+
+  build() {
     return new Proxy(this, {
       get: (target, prop) => {
         if (typeof prop === "string") {
@@ -92,38 +119,4 @@ export class I18n {
     });
   }
 
-  parseLanguageFile(content: string): Record<string, string> {
-    const translations: Record<string, string> = {};
-
-    // Split the content into lines
-    const lines = content.split("\n");
-
-    // Process each line
-    for (const line of lines) {
-      // Ignore empty lines and comments
-      if (line.trim() === "" || line.trim().startsWith("#")) {
-        continue;
-      }
-
-      // Split the line into key and value
-      const [key, value] = line.split("=");
-
-      // Trim excess whitespace and replace %space% with a space
-      const trimmedKey = key.trim();
-      // Add the translation to the dictionary
-      translations[trimmedKey] = value.trim().replace(/%space%/g, " ");
-    }
-
-    return translations;
-  }
-
-  translate(key: string): string {
-    // Check if the translation exists
-    if (this.translations.hasOwnProperty(key)) {
-      return this.translations[key].replace(/\\n/g, "\n");
-    }
-
-    // If the translation doesn't exist, return the key itself
-    return key;
-  }
 }

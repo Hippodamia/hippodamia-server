@@ -3,7 +3,7 @@
 const {Horse} = require("core/Horse")
 const {Race} = require("core/Race")
 const {EffectType} = require("core/types")
-const {HippodamiaRandomEventManager} = require("hippodamia")
+const { RandomEventManager } = require("src/components/random-events/RandomEventManager")
 
 //remove
 
@@ -371,17 +371,17 @@ const tripleWoohooEvent = {
     }
 }
 
-HippodamiaRandomEventManager.register(normal_woohoo_power)//正常芜湖
-HippodamiaRandomEventManager.register(gold_woohoo_power)//金芜湖
-HippodamiaRandomEventManager.register(brilliant_woohoo_power)//卓越芜湖
-HippodamiaRandomEventManager.register(supreme_woohoo_power)//至尊芜湖
-HippodamiaRandomEventManager.register(ultrafast_dark_woohoo)//超快暗芜湖
-HippodamiaRandomEventManager.register(absolute_power_woohoo)//绝对力量
-HippodamiaRandomEventManager.register(shadows_woohoo)//万寂逝影
-HippodamiaRandomEventManager.register(friendship_magic_woohoo)//友情魔法
-HippodamiaRandomEventManager.register(woohoo_staff_v12)//芜湖法杖
-HippodamiaRandomEventManager.register(youDontUnderstandWoohoo)//你不懂芜湖
-HippodamiaRandomEventManager.register(woohoo_coffee)//芜湖咖啡
-HippodamiaRandomEventManager.register(luckyCatEvent)//芜湖小猫
-HippodamiaRandomEventManager.register(wohooTakeoffEvent)//芜湖起飞
-HippodamiaRandomEventManager.register(tripleWoohooEvent)//三倍芜湖
+RandomEventManager.instance.register(normal_woohoo_power)//正常芜湖
+RandomEventManager.instance.register(gold_woohoo_power)//金芜湖
+RandomEventManager.instance.register(brilliant_woohoo_power)//卓越芜湖
+RandomEventManager.instance.register(supreme_woohoo_power)//至尊芜湖
+RandomEventManager.instance.register(ultrafast_dark_woohoo)//超快暗芜湖
+RandomEventManager.instance.register(absolute_power_woohoo)//绝对力量
+RandomEventManager.instance.register(shadows_woohoo)//万寂逝影
+RandomEventManager.instance.register(friendship_magic_woohoo)//友情魔法
+RandomEventManager.instance.register(woohoo_staff_v12)//芜湖法杖
+RandomEventManager.instance.register(youDontUnderstandWoohoo)//你不懂芜湖
+RandomEventManager.instance.register(woohoo_coffee)//芜湖咖啡
+RandomEventManager.instance.register(luckyCatEvent)//芜湖小猫
+RandomEventManager.instance.register(wohooTakeoffEvent)//芜湖起飞
+RandomEventManager.instance.register(tripleWoohooEvent)//三倍芜湖
