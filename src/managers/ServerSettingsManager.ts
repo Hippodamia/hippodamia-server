@@ -28,12 +28,18 @@ type ServerSettings = HippodamiaAPISettings & (OnebotServerSettings | TestServer
 };
 
 export default class ServerSettingsManager {
-    public static instance: ServerSettingsManager = new ServerSettingsManager();
+    public static instance: ServerSettingsManager;
 
 
     settings: ServerSettings;
 
-    constructor() {
+    path:string
+
+    constructor(path?:string) {
+        if(!path)
+            this.path = `${packageDirectorySync()}/config/settings.json`
+        else
+            this.path = path
         if (!ServerSettingsManager.instance)
             ServerSettingsManager.instance = this;
         this.settings = this.defaultSetttings();
@@ -47,7 +53,7 @@ export default class ServerSettingsManager {
      */
     load() {
         try {
-            this.settings = JSON.parse(fs.readFileSync(packageDirectorySync() + '/config/settings.json').toString()) as ServerSettings;
+            this.settings = JSON.parse(fs.readFileSync(this.path, 'utf-8').toString()) as ServerSettings;
             return true;
         } catch (e) {
             console.error(e);

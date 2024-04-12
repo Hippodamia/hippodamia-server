@@ -6,11 +6,12 @@ import { CommandRouter } from "@/types";
 import { randomEmoji } from "@/utils";
 import { Hippodamia } from "@/hippodamia";
 import { GroupSettingsManager } from "@/managers/GroupSettingsManager";
+import { RandomEventComponent, RandomEventManager } from "@/components/random-events";
 
 
-const i18n = Hippodamia.instance.i18n
 
 export const createRace: CommandRouter = async (ctx) => {
+    const i18n = Hippodamia.instance.i18n
 
     let mode = ctx.args!.mode;
 
@@ -53,6 +54,14 @@ export const createRace: CommandRouter = async (ctx) => {
 
     // todo 传入独立配置对象?
     const race = new Race({ speed: 10, length: 20, mode: mode as any })
+
+    switch (mode) {
+        case 'pure':
+            break;
+        case 'random':
+            race.components.push(new RandomEventComponent(RandomEventManager.instance))
+    }
+
     try {
         roomService.createRoom({
             channelId: ctx.channel!.id,
@@ -74,6 +83,8 @@ export const createRace: CommandRouter = async (ctx) => {
 
 /** 加入命令的路由 */
 export const joinRace: CommandRouter = async (ctx) => {
+    const i18n = Hippodamia.instance.i18n
+
     const cid = ctx.channel!.id;
     if (roomService.getRoom(cid)) {
         const race = roomService.getRoom(cid)!.race;
@@ -88,6 +99,8 @@ export const joinRace: CommandRouter = async (ctx) => {
 
 /** fake player的路由 */
 export const addFakePlayer: CommandRouter = async (ctx) => {
+    const i18n = Hippodamia.instance.i18n
+
     const cid = ctx.channel!.id;
     const count = Number(ctx.args!.count) ?? 1;
 
@@ -110,6 +123,8 @@ export const addFakePlayer: CommandRouter = async (ctx) => {
 
 /** 开始命令的路由 */
 export const startRace: CommandRouter = async (ctx) => {
+    const i18n = Hippodamia.instance.i18n
+
     const cid = ctx.channel!.id;
     if (roomService.getRoom(cid)) {
         const race = roomService.getRoom(cid)!.race;
@@ -142,11 +157,11 @@ export const startRace: CommandRouter = async (ctx) => {
                         let strs: string[] = [];
                         strs.push(i18n['race.end.ranking.winners.title'])
                         result.winners.forEach(winner => {
-                            strs.push(`- ${winner.display}(@${winner.user.name})`)
+                            strs.push(`- ${winner.display}(@${winner.user.id})`)
                         })
                         strs.push(i18n['race.end.ranking.others.title'])
                         result.ranks.filter(x => !result.winners.includes(x)).forEach(player => {
-                            strs.push(`- ${player.display}(@${player.user.name})`)
+                            strs.push(`- ${player.display}(@${player.user.id})`)
                         })
 
                         ctx.reply(strs.join('\n'))
@@ -165,7 +180,7 @@ export const startRace: CommandRouter = async (ctx) => {
 }
 
 //todo 增加多平台不同的渲染方式
-/** 渲染当前比赛的文本 */ 
+/** 渲染当前比赛的文本 */
 function renderRace(race: Race): string {
     return [
         ...race.logs.map(x => x.content),

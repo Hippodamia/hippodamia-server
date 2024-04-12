@@ -3,11 +3,13 @@ import { GroupSettingsManager } from "@/managers/GroupSettingsManager";
 import { CommandRouter } from "@/types";
 
 const gsm = GroupSettingsManager.instance;
-const i18n = Hippodamia.instance.i18n;
+
 
 export const hippodamiaRoutes: { [key: string]: CommandRouter } = {
 
+
     'reloadConfig': async (ctx) => {
+        const i18n = Hippodamia.instance.i18n
 
         ctx.logger.info('重载配置文件')
         gsm.reload();
@@ -27,6 +29,8 @@ export const hippodamiaRoutes: { [key: string]: CommandRouter } = {
     },
 
     'off': async (ctx) => {
+        const i18n = Hippodamia.instance.i18n
+
         let g = ctx.channel!.id;
         gsm.set(g, { enable: false });
         ctx.reply(i18n['bot.disabled'])
@@ -35,6 +39,8 @@ export const hippodamiaRoutes: { [key: string]: CommandRouter } = {
 
 
     'on': async (ctx) => {
+        const i18n = Hippodamia.instance.i18n
+
         let g = ctx.channel!.id;
         gsm.set(g, { enable: true });
         ctx.reply(i18n['bot.enabled'])

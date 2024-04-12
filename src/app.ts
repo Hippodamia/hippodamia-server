@@ -15,6 +15,27 @@ import ServerSettingsManager from './managers/ServerSettingsManager';
 import { OneBotAdapter } from './OnebotAdapter';
 import { RandomEventManager } from './components/random-events/RandomEventManager';
 
+import * as fs from 'fs';
+import { packageDirectorySync } from 'pkg-dir';
+
+
+
+console.log('Hippodamia Server 启动中...')
+
+// 根据启动参数载入配置文件
+const arg = process.argv.length > 2 ? process.argv[2] : undefined;
+
+const setting_path = `${packageDirectorySync()}/config/settings${arg ? '.' : ''}${arg}.json`;
+
+new ServerSettingsManager(fs.existsSync(setting_path) ? setting_path : undefined);
+
+console.log('配置文件:', setting_path)
+
+
+// 初始化Hippodamia核心
+
+new Hippodamia()
+
 
 const bot = Hippodamia.instance.bot;
 
@@ -80,26 +101,39 @@ for (const shop of readShops()) {
     bot.cmd(`/${shop.name} <page>`, RouteWithEnabled(Routers.showShopItems))
 }
 
-bot.cmd('/hippodamia reload', RouteWithPermission(Routers.hippodamiaRoutes['reloadConfig']))
-bot.cmd('/hippodamia off', RouteWithPermission(Routers.hippodamiaRoutes.off))
-bot.cmd('/hippodamia on', RouteWithPermission(Routers.hippodamiaRoutes.on))
-bot.cmd('/hippodamia config', RouteWithPermission(Routers.hippodamiaRoutes.showGroupConfig))
+bot.cmd('/hippodamia|赛马 reload', RouteWithPermission(Routers.hippodamiaRoutes['reloadConfig']))
+bot.cmd('/hippodamia|赛马 off', RouteWithPermission(Routers.hippodamiaRoutes.off))
+bot.cmd('/hippodamia|赛马 on', RouteWithPermission(Routers.hippodamiaRoutes.on))
+bot.cmd('/hippodamia|赛马 config', RouteWithPermission(Routers.hippodamiaRoutes.showGroupConfig))
 
 
 //bot.commands.find(cmd => cmd.name == 'race')!.showHelp = true;
 
 
-bot.cmd('/wiki event list <page>', (ctx) => {
+bot.cmd('/wiki|图鉴 event|事件|re list|l|列表 <page>', (ctx) => {
+    let page
+    if (ctx.args?.page && !isNaN(Number(ctx.args?.page)) ) 
+        page = Number(ctx.args?.page)
+    else
+        page = 1
     //create a string array of 100 items
-    ctx.reply(paginationTemplate([], {
+    ctx.reply(paginationTemplate(RandomEventManager.instance.getAll().map(event => event.alias + '|' + event.name), {
         size: 10,
-        count: Number(ctx.args!.page ?? 1)
+        count: Number(page)
     }, "/wiki event list <page>"))
 })
+
 
 bot.cmd('/ping <str>', (ctx) => {
     console.log(ctx.args!.str)
     ctx.reply('pong' + ctx.args!.str)
+})
+
+bot.cmd('赫尔好可爱', (ctx) => {
+    ctx.reply('哼哼...啊啊啊啊!')
+})
+bot.cmd('抢劫小马商店', (ctx) => {
+    ctx.reply('商店还没开放呢...')
 })
 
 //载入核心数据
@@ -119,8 +153,8 @@ switch (settings.mode) {
     case 'onebot':
         bot.load(new OneBotAdapter(settings.onebot))
     case 'test':
-        //@ts-ignore
-        //bot.load(new SandboxAdapter("reverse"))
+    //@ts-ignore
+    //bot.load(new SandboxAdapter("reverse"))
 }
 
 

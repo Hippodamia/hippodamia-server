@@ -1,8 +1,12 @@
 import { GameModeSetting, GroupSetting } from "../types";
 //import json5 from 'json5'
 import * as fs from 'node:fs';
+import {packageDirectorySync} from 'pkg-dir'
 
 export class GroupSettingsManager {
+
+    path =  packageDirectorySync()+`/config/groups_settings.json`
+
     settings: { 'global': GroupSetting, [key: string]: GroupSetting } = { 'global': {} }
 
     static instance: GroupSettingsManager = new GroupSettingsManager()
@@ -46,13 +50,13 @@ export class GroupSettingsManager {
     }
 
     private load() {
-        const path = `./config/groups_settings.json`
-        this.settings = JSON.parse(fs.readFileSync(path).toString())
+       
+        this.settings = JSON.parse(fs.readFileSync(this.path, 'utf-8').toString())
     }
 
     private save() {
-        const path = `./config/groups_settings.json`
-        fs.writeFileSync(path, JSON.stringify(this.settings, null, 2))
+        
+        fs.writeFileSync(this.path, JSON.stringify(this.settings, null, 2))
     }
 
     /**

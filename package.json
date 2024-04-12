@@ -5,7 +5,8 @@
   "scripts": {
     "db:studio": "drizzle-kit studio",
     "test": "bun test",
-    "dev": "bun --hot run src/app.ts"
+    "dev": "bun --hot run src/app.ts",
+    "dev-ws": "bun --hot run src/app.ts ws"
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -18,6 +19,7 @@
     "@hippodamia/adapter-sandbox": "^0.1.0-beta",
     "@hippodamia/bot": "link:@hippodamia/bot",
     "@hippodamia/core": "link:@hippodamia/core",
+    "@types/ws": "^8.5.10",
     "better-sqlite3": "^9.4.3",
     "drizzle-orm": "^0.30.6",
     "eventemitter3": "^5.0.1",
@@ -25,6 +27,7 @@
     "json5": "^2.2.3",
     "onebot-client": "^1.1.1",
     "pino-pretty": "^11.0.0",
-    "pkg-dir": "^8.0.0"
+    "pkg-dir": "^8.0.0",
+    "ws": "^8.16.0"
   }
 }

@@ -2,6 +2,8 @@ import { Adapter, Bot } from "@hippodamia/bot";
 import { getTextOfJSDocComment } from "typescript";
 import { Client, GroupMessage, Message, PrivateMessage } from "onebot-client";
 
+import { WebSocket } from "ws";
+
 export type OneBotConfig =
     { mode: 'http', port: number, secret?: string, api: string }
     | { mode: 'ws', url: string, secret?: string, bot: string }
@@ -23,7 +25,7 @@ export class OneBotAdapter implements Adapter {
     bot!: Bot;
     config: OneBotConfig;
 
-    client?: Client
+    client?: OneBotWsClient
 
     private getApiUrl() {
         if (this.config.mode === 'http') {
@@ -65,16 +67,7 @@ export class OneBotAdapter implements Adapter {
         }
     }
 
-    private ws_apis: OneBotAdapter['api'] = {
-        sendGroupMessage: async(group_id, message, auto_escape) => {
-            await this.client?.sendGroupMsg(Number(group_id), message)
-            return 1
-        },
-        sendPrivateMessage : async (user_id, message, auto_escape) =>{
-            await this.client?.sendPrivateMsg(Number(user_id), message)
-            return 1
-        }
-    }
+
 
     // 构造传入配置对象，根据配置对象初始化API方法表
     constructor(config: OneBotConfig) {
@@ -86,7 +79,8 @@ export class OneBotAdapter implements Adapter {
                 this.api = this.http_apis
                 break
             case 'ws':
-                this.api = this.ws_apis
+                this.client = new OneBotWsClient(config.url, Number(config.bot), '')
+                this.api = this.client?.apis
                 break;
             case 'null':
                 this.api = {
@@ -109,7 +103,7 @@ export class OneBotAdapter implements Adapter {
 
         this.bot.logger.debug(`[OneBotAdapter] Sending message to ${target.channel || target.user}: ${msg}`)
 
-        if (this.config.mode == 'http') {
+        if (this.config.mode == 'http' || this.config.mode == 'ws') {
             if (target.channel)
                 this.api.sendGroupMessage(target.channel, msg)
             else if (target.user)
@@ -151,11 +145,20 @@ export class OneBotAdapter implements Adapter {
 
         if (this.config.mode === 'ws') {
             //初始化正向ws模式的onebot适配器
-            this.client = new Client(Number(this.config.bot), this.config.url)
-            this.client.start()
+            this.bot.logger.info(`[OneBotAdapter] WS connecting to ${this.config.url}`)
 
+            this.client?.ws.on('open', () => {
+                this.bot.logger.info(`[OneBotAdapter] WS connected`)
+            })
             //监听消息事件
-            this.client.on('message', this.handler['message'])
+            this.client?.ws.on('message', (data)=>{
+                try {
+                    this.bot.logger.debug(`[OneBotAdapter] WS received message: ${data.toString()}`)
+                    this.handler['message'](JSON.parse(data.toString()) as Message)
+                }catch(e){
+                    this.bot.logger.error(`[OneBotAdapter] WS message error: ${e}`)
+                }
+            })
 
             this.bot.logger.info(`[OneBotAdapter] WS Client started`)
 
@@ -165,6 +168,7 @@ export class OneBotAdapter implements Adapter {
 
     handler = {
         'message': (event: Message) => {
+            this.bot.logger.debug(`[OneBotAdapter] Received message: ${event.message_type} ${event.raw_message}`)
             if (event.message_type === 'private') {
                 const { user_id, raw_message } = event as PrivateMessage
 
@@ -204,4 +208,44 @@ type GroupSender = Sender & {
     level: string; // 群等级（仅群聊有效）
     role: 'owner' | 'admin' | 'member'; // 群成员身份（仅群聊有效）
     title: string; // 群头衔（仅群聊有效）
+}
+
+
+class OneBotWsClient {
+
+    ws: WebSocket;
+
+    constructor(url: string, bot_id: number, secret: string) {
+        this.ws = new WebSocket(url)
+    }
+
+
+    apis: OneBotAdapter['api'] = {
+        sendGroupMessage: async (group_id, message, auto_escape) => {
+
+            this.sendAction('send_group_msg', { group_id, message, auto_escape }, '123')
+            return 1
+        },
+        sendPrivateMessage: async (user_id, message, auto_escape) => {
+            this.sendAction('send_group_msg', { user_id, message, auto_escape }, '123')
+
+            return 1
+        }
+    }
+
+    private sendAction(action: string, params: any, echo: string) {
+        this.ws.send(JSON.stringify({
+            action,
+            params,
+            echo
+        }));
+    }
+
+
+}
+
+interface WsAction {
+    action: string;
+    params: any;
+    echo: string;
 }
