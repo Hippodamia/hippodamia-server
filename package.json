@@ -23,6 +23,7 @@
     "eventemitter3": "^5.0.1",
     "fastify": "^4.26.2",
     "json5": "^2.2.3",
+    "onebot-client": "^1.1.1",
     "pino-pretty": "^11.0.0",
     "pkg-dir": "^8.0.0"
   }

@@ -1,10 +1,10 @@
 import { Adapter, Bot } from "@hippodamia/bot";
 import { getTextOfJSDocComment } from "typescript";
-
+import { Client, GroupMessage, Message, PrivateMessage } from "onebot-client";
 
 export type OneBotConfig =
     { mode: 'http', port: number, secret?: string, api: string }
-    | { mode: 'ws', host: string, port: number, secret?: string }
+    | { mode: 'ws', url: string, secret?: string, bot: string }
     | { mode: 'null' }
 
 export class OneBotAdapter implements Adapter {
@@ -19,11 +19,14 @@ export class OneBotAdapter implements Adapter {
         sendGroupMessage: (group_id: string, message: string, auto_escape?: boolean) => Promise<number>,
         sendPrivateMessage: (user_id: string, message: string, auto_escape?: boolean) => Promise<number>,
     }
+
     bot!: Bot;
     config: OneBotConfig;
 
+    client?: Client
+
     private getApiUrl() {
-        if(this.config.mode === 'http'){
+        if (this.config.mode === 'http') {
             return this.config.api;
         }
         return ''
@@ -38,7 +41,7 @@ export class OneBotAdapter implements Adapter {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    group_id:Number(group_id),
+                    group_id: Number(group_id),
                     message,
                     auto_escape
                 })
@@ -53,7 +56,7 @@ export class OneBotAdapter implements Adapter {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    user_id:Number(user_id),
+                    user_id: Number(user_id),
                     message,
                     auto_escape
                 })
@@ -62,21 +65,38 @@ export class OneBotAdapter implements Adapter {
         }
     }
 
+    private ws_apis: OneBotAdapter['api'] = {
+        sendGroupMessage: async(group_id, message, auto_escape) => {
+            await this.client?.sendGroupMsg(Number(group_id), message)
+            return 1
+        },
+        sendPrivateMessage : async (user_id, message, auto_escape) =>{
+            await this.client?.sendPrivateMsg(Number(user_id), message)
+            return 1
+        }
+    }
+
     // 构造传入配置对象，根据配置对象初始化API方法表
     constructor(config: OneBotConfig) {
         this.config = config
         //根据配置文件对应不同的消息收发方式
-        if (config.mode === 'http') {
-            this.api = this.http_apis
-        } else {
-            this.api = {
-                sendGroupMessage: async (group_id, message, auto_escape): Promise<number> => {
-                    return 1
-                },
-                sendPrivateMessage: async (user_id, message, auto_escape): Promise<number> => {
-                    return 1
+
+        switch (config.mode) {
+            case 'http':
+                this.api = this.http_apis
+                break
+            case 'ws':
+                this.api = this.ws_apis
+                break;
+            case 'null':
+                this.api = {
+                    sendGroupMessage: async (group_id, message, auto_escape): Promise<number> => {
+                        return 1
+                    },
+                    sendPrivateMessage: async (user_id, message, auto_escape): Promise<number> => {
+                        return 1
+                    }
                 }
-            }
         }
     }
 
@@ -90,7 +110,7 @@ export class OneBotAdapter implements Adapter {
         this.bot.logger.debug(`[OneBotAdapter] Sending message to ${target.channel || target.user}: ${msg}`)
 
         if (this.config.mode == 'http') {
-            if (target.channel) 
+            if (target.channel)
                 this.api.sendGroupMessage(target.channel, msg)
             else if (target.user)
                 this.api.sendPrivateMessage(target.user, msg)
@@ -129,32 +149,41 @@ export class OneBotAdapter implements Adapter {
             this.bot.logger.info(`[OneBotAdapter] HTTP listening on port ${this.config.port}`)
         }
 
+        if (this.config.mode === 'ws') {
+            //初始化正向ws模式的onebot适配器
+            this.client = new Client(Number(this.config.bot), this.config.url)
+            this.client.start()
+
+            //监听消息事件
+            this.client.on('message', this.handler['message'])
+
+            this.bot.logger.info(`[OneBotAdapter] WS Client started`)
+
+        }
+
     }
 
     handler = {
-        'message': (event: MessageEvent) => {
+        'message': (event: Message) => {
             if (event.message_type === 'private') {
-                const { user_id, raw_message } = event as PrivateMessageEvent
+                const { user_id, raw_message } = event as PrivateMessage
 
                 this.bot.emit('command',
                     {
                         command_text: raw_message,
                         user: { id: user_id.toString() },
-                        platform:'onebot11'
+                        platform: 'onebot11'
                     })
             }
 
             if (event.message_type === 'group') {
-                const { user_id, group_id, sender, raw_message } = event as GroupMessageEvent
-                const group_sender = sender as GroupSender
-
-                //this.bot.logger.debug(`[OneBotAdapter] Received message from ${group_sender.user_id} in group ${group_id}: ${raw_message}`)
+                const { user_id, group_id, sender, raw_message } = event as GroupMessage
                 this.bot.emit('command',
                     {
                         command_text: raw_message,
                         channel: { id: group_id.toString() },
                         user: { id: user_id.toString() },
-                        platform:'onebot11'
+                        platform: 'onebot11'
                     })
             }
             return "ok"
@@ -175,53 +204,4 @@ type GroupSender = Sender & {
     level: string; // 群等级（仅群聊有效）
     role: 'owner' | 'admin' | 'member'; // 群成员身份（仅群聊有效）
     title: string; // 群头衔（仅群聊有效）
-}
-
-type Anonymous = {
-    id: number; // 匿名用户 ID
-    name: string; // 匿名用户名称
-    flag: string; // 匿名用户 flag
-};
-
-type QuickOperation = {
-    reply?: string; // 要回复的内容，如果不回复则为 undefined
-    auto_escape?: boolean; // 消息内容是否作为纯文本发送，不解析 CQ 码
-};
-
-interface MessageEvent {
-    post_type: 'message'
-
-    /** 消息类型 */
-    message_type: string
-
-    /** 消息子类型 */
-    sub_type: string
-
-    /** 消息 ID */
-    message_id: number
-
-    /** 发送者 QQ 号 */
-    user_id: number
-
-    /** 消息内容 */
-    //message: Messages[]
-
-    /** 原始消息内容 */
-    raw_message: string
-
-    /** 字体 */
-    font: number
-}
-
-interface PrivateMessageEvent extends MessageEvent {
-    message_type: 'private',
-    sub_type: 'friend' | 'group' | 'other',
-    sender: Sender
-}
-interface GroupMessageEvent extends MessageEvent {
-    anonymous: Anonymous,
-    message_type: 'group',
-    sub_type: 'normal' | 'anonymous' | 'notice',
-    group_id: number
-    sender: GroupSender
 }

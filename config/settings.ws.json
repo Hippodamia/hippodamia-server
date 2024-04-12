@@ -1,0 +1,15 @@
+{
+  "mode": "onebot",
+  "onebot": {
+    "bot": "3324288929",
+    "mode": "ws",
+    "url": "ws://localhost:11012",
+    "secret": ""
+  },
+  "api": {
+    "port": 12778
+  },
+  "logging": {
+    "level": "debug"
+  }
+}
