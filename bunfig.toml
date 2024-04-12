@@ -1,6 +1,0 @@
-[install.scopes]
-# registry as string
-"hippodamia" = {
-token = "$TOKEN",
-url = "https://npm.pkg.github.com/hippodamia"
-}
