@@ -1,5 +1,7 @@
 # 分群设置
 
+![alt text](assets/group_settings/image.png)
+
 ## 概念
 
 分群设置将不同的模式及不同的群组的配置分隔开来储，以便于管理。
