@@ -33,3 +33,6 @@ bot.reloaded = [Hippodamia]分群配置重载成功!
 
 # 群组必须!
 bot.require_channel = 此命令只能在群组中使用!
+
+# 积分查询 可用变量:%coins%
+bot.command.query_coins = 你目前有%coins%小马积分!\n目前积分毫无作用!
