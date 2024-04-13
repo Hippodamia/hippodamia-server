@@ -19,13 +19,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Install Bun
-        shell: pwsh
-        run: |
-          irm bun.sh/install.ps1 | iex
-          bun -v
-          bun i
-          bun run build-win
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - run: bun -v
+      - run: bun i
+      - run: bun run build-win
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
         with:
