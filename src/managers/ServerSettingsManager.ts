@@ -20,7 +20,7 @@ type TestServerSettings = {
 }
 
 type LoggingSettings = {
-    level: 'info' | 'debug' | 'warn' | 'error'
+    level: 'info' | 'debug' | 'warn' | 'error' | 'fatal' | 'trace' 
 }
 
 type ServerSettings = HippodamiaAPISettings & (OnebotServerSettings | TestServerSettings) & {
@@ -33,10 +33,10 @@ export default class ServerSettingsManager {
 
     settings: ServerSettings;
 
-    path:string
+    path: string
 
-    constructor(path?:string) {
-        if(!path)
+    constructor(path?: string) {
+        if (!path)
             this.path = `${packageDirectorySync()}/config/settings.json`
         else
             this.path = path

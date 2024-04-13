@@ -10,6 +10,7 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "@types/bunyan": "^1.8.11",
     "drizzle-kit": "^0.20.14"
   },
   "peerDependencies": {
@@ -19,13 +20,16 @@
     "@hippodamia/adapter-sandbox": "^0.1.0-beta",
     "@hippodamia/bot": "link:@hippodamia/bot",
     "@hippodamia/core": "link:@hippodamia/core",
+    "@mechanicalhuman/bunyan-pretty": "^3.1.0",
     "@types/ws": "^8.5.10",
     "better-sqlite3": "^9.4.3",
+    "bunyan": "^1.8.15",
     "drizzle-orm": "^0.30.6",
     "eventemitter3": "^5.0.1",
     "fastify": "^4.26.2",
     "json5": "^2.2.3",
     "onebot-client": "^1.1.1",
+    "pino": "^8.20.0",
     "pino-pretty": "^11.0.0",
     "pkg-dir": "^8.0.0",
     "ws": "^8.16.0"
