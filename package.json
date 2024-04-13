@@ -19,8 +19,9 @@
   },
   "dependencies": {
     "@hippodamia/adapter-sandbox": "^0.1.0-beta",
-    "@hippodamia/bot": "^1.1.4",
+    "@hippodamia/bot": "^1.2.0",
     "@hippodamia/core": "^1.0.3",
+    "@mechanicalhuman/bunyan-pretty": "^3.1.0",
     "@types/ws": "^8.5.10",
     "better-sqlite3": "^9.4.3",
     "bunyan": "^1.8.15",
