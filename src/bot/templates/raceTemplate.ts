@@ -1,10 +1,11 @@
-export function raceCreatedTemplate(mode: string = 'pure') {
+const map = {
+    'pure': '纯净赛场',
+    'random': '随机事件',
+    'contract': '契约之战'
+}
+export function raceCreatedTemplate(mode: keyof typeof map = 'pure') {
 
-    const map = {
-        'pure': '纯净赛场',
-        'random': '随机事件',
-        'contract': '契约之战'
-    }
+
 
     return [
         '> 🐎比赛创建完毕!',

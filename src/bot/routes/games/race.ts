@@ -67,6 +67,10 @@ export const createRace: CommandRouter = async (ctx) => {
             break;
         case 'random':
             race.components.push(new RandomEventComponent(RandomEventManager.instance))
+            break;
+        default:
+            ctx.bot.logger.debug(`unknown mode ${mode}`)
+            return;
     }
 
     try {

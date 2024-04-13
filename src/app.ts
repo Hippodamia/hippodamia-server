@@ -1,4 +1,3 @@
-import { Adapter, Bot, randomUser } from '@hippodamia/bot'
 import { paginationTemplate } from "./bot/templates/commonTemplate";
 
 import { startListen } from './api'
@@ -28,30 +27,22 @@ const arg = process.argv.length > 2 ? process.argv[2] : undefined;
 
 let setting_path: string;
 if (arg) {
-
     setting_path = `${packageDirectorySync()}/config/settings${arg ? '.' : ''}${arg}.json`;
-
-    console.log('使用配置文件:', setting_path)
 } else {
-
-    const files = fs.readdirSync(`${packageDirectorySync()}/config/`)
-        .filter(file => file.startsWith('settings') && file.endsWith('.json'))
-
-
-    const select = await inquirer.prompt({
-        type: 'list',
-        name: 'file',
-        message: '请选择配置文件',
-        choices: files
-    })
-
-    setting_path = `${packageDirectorySync()}/config/${select.file}`
-
-    console.log('使用配置文件:', setting_path)
-
+    setting_path = `${packageDirectorySync()}/config/settings.json`;
+    // const files = fs.readdirSync(`${packageDirectorySync()}/config/`)
+    //     .filter(file => file.startsWith('settings') && file.endsWith('.json'))
+    // const select = await inquirer.prompt({
+    //     type: 'list',
+    //     name: 'file',
+    //     message: '请选择配置文件',
+    //     choices: files
+    // })
+    // setting_path = `${packageDirectorySync()}/config/${select.file}`
+    // console.log('使用配置文件:', setting_path)
 }
 
-
+console.log('使用配置文件:', setting_path)
 new ServerSettingsManager(fs.existsSync(setting_path) ? setting_path : undefined);
 
 // 初始化Hippodamia核心
@@ -171,7 +162,7 @@ const settings = ServerSettingsManager.instance.settings
 
 switch (settings.mode) {
     case 'onebot':
-        if (!bot.adapters.find(adapter => adapter.constructor.name === 'OneBotAdapter'))
+        if (!bot.adapters.find(adapter => adapter.info.name == 'onebot11'))
             bot.load(new OneBotAdapter(settings.onebot))
         else
             bot.logger.info('OneBotAdapter already loaded')

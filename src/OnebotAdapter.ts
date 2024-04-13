@@ -140,15 +140,15 @@ export class OneBotAdapter implements Adapter {
                 port: this.config.port,
             });
 
-            this.bot.logger.info(`[OneBotAdapter] HTTP listening on port ${this.config.port}`)
+            this.bot.logger.info(`[OneBotAdapter] HTTP 监听服务以启动 ${this.config.port}`)
         }
 
         if (this.config.mode === 'ws') {
             //初始化正向ws模式的onebot适配器
-            this.bot.logger.info(`[OneBotAdapter] WS connecting to ${this.config.url}`)
+            this.bot.logger.info(`[OneBotAdapter] 正向ws模式启动,正在连接 ${this.config.url}`)
 
             this.client?.ws.on('open', () => {
-                this.bot.logger.info(`[OneBotAdapter] WS connected`)
+                this.bot.logger.info(`[OneBotAdapter] 正向ws已连接`)
             })
             //监听消息事件
             this.client?.ws.on('message', (data)=>{
@@ -160,7 +160,7 @@ export class OneBotAdapter implements Adapter {
                 }
             })
 
-            this.bot.logger.info(`[OneBotAdapter] WS Client started`)
+            this.bot.logger.info(`[OneBotAdapter] 正向ws客户端初始化完毕`)
 
         }
 
