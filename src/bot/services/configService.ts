@@ -1,6 +1,7 @@
 import * as fs from 'node:fs';
-import {Shop} from "@/types";
+import { Shop } from "@/types";
 import path from 'node:path';
+import { packageDirectorySync } from 'pkg-dir';
 
 const readJsonFiles = (directory: string): any[] => {
     const files = fs.readdirSync(directory);
@@ -17,6 +18,6 @@ const readJsonFiles = (directory: string): any[] => {
     return data;
 };
 
-export function readShops():Shop[]{
-    return readJsonFiles(path.resolve('./config/shops'));
+export function readShops(): Shop[] {
+    return readJsonFiles(packageDirectorySync() + '/config/shops');
 }

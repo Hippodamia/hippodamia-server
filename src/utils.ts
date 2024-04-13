@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
-
+import Logger from "bunyan";
+import { BaseLogger } from "@hippodamia/bot";
 /**
  * Recursively reads files in a directory and applies a handler function to each file.
  *
@@ -73,50 +74,14 @@ type I18nType = {
   [key: string]: string;
 };
 
-
-export class I18n {
-  
-  translations: Record<string, string>;
-
-  constructor(language: string, directory: string) {
-    const langFilePath = `${directory}/${language}.lang`;
-
-    console.log(`Loading translations from ${langFilePath}`);
-    
-    const langFileContent = fs.readFileSync(langFilePath, "utf-8");
-    this.translations = this.parseLanguageFile(langFileContent);
+export function wrapLogger(level: BaseLogger['level'], logger: Logger): BaseLogger {
+  return {
+    level: level,
+    info: (data: any | string) => logger.info(data),
+    error: (data: any) => logger.error(data),
+    debug: (data: any) => logger.debug(data),
+    warn: (data: any) => logger.warn(data),
+    trace: (data: any) => logger.trace(data),
+    fatal: (data: any) => logger.fatal(data)
   }
-
-  parseLanguageFile(content: string): Record<string, string> {
-    const translations: Record<string, string> = {};
-    const lines = content.split("\n");
-    for (const line of lines) {
-      if (line.trim() === "" || line.trim().startsWith("#")) {
-        continue;
-      }
-      const [key, value] = line.split("=");
-      const trimmedKey = key.trim();
-      translations[trimmedKey] = value.trim().replace(/%space%/g, " ");
-    }
-    return translations;
-  }
-
-  translate(key: string): string {
-    if (this.translations.hasOwnProperty(key)) {
-      return this.translations[key].replace(/\\n/g, "\n");
-    }
-    return key;
-  }
-
-  build() {
-    return new Proxy(this, {
-      get: (target, prop) => {
-        if (typeof prop === "string") {
-          return target.translate(prop);
-        }
-        return Reflect.get(target, prop);
-      },
-    });
-  }
-
 }

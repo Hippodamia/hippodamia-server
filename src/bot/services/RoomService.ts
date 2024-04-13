@@ -6,11 +6,21 @@ class RoomService {
     private rooms: Room[] = [];
     private allow_time_room = new Map<string, number>();
 
-    getRoom(channelId: string) {
-        return this.rooms.find(x => x.channelId == channelId)
+    /**
+     * 获取一个房间对象 
+     * @param channelId 
+     */
+    public getRoom(channelId: string) {
+        const room = this.rooms.find(x => x.channelId == channelId)
+        return room;
     }
 
-    createRoom(room: Room):boolean {
+    /**
+     * 新增一个房间，如果本群组存在这个房间，则会异常
+     * @param room 房间对象(信息)
+     * @returns 
+     */
+    public createRoom(room: Room):boolean {
         // 检查 channelId 是否重复
         const existingRoom = this.rooms.find(r => r.channelId === room.channelId);
         if (existingRoom && !existingRoom.race.ended) {
@@ -26,6 +36,11 @@ class RoomService {
         return true;
     }
 
+    /**
+     * 删除指定群组的房间，并为这个群组设置冷却时常
+     * 冷却时常取决于群组设置中的 cd 字段
+     * @param channelId 群组ID
+     */
     public removeRoom(channelId: string) {
         const index = this.rooms.findIndex(r => r.channelId === channelId);
         if (index !== -1) {

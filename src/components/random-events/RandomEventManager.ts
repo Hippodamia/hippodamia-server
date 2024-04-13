@@ -4,16 +4,20 @@ import { getFilesRecursively } from '../../utils';
 import { packageDirectorySync } from 'pkg-dir'
 import * as path from "node:path"
 import * as fs from "node:fs"
+import { BaseLogger } from '@hippodamia/bot';
 
 
 export class RandomEventManager implements IContentManager<RandomEvent> {
 
     static instance: RandomEventManager;
 
-    constructor() {
-        if (RandomEventManager.instance) {
+    logger!: BaseLogger;
+
+    constructor(logger: BaseLogger) {
+        if (RandomEventManager.instance)
             return RandomEventManager.instance;
-        }
+
+        this.logger = logger;
         RandomEventManager.instance = this;
         this.loadRandomEvents();
     }
@@ -43,7 +47,7 @@ export class RandomEventManager implements IContentManager<RandomEvent> {
 
     register(event: RandomEvent) {
         this.events.set(event.name, event);
-        console.log('[REM]Register random event: ' + event.name + '|' + event.alias);
+        this.logger.info('[REM] 注册事件' + event.name + ' | ' + event.alias);
     }
 
     get(name: string) {
@@ -63,9 +67,9 @@ export class RandomEventManager implements IContentManager<RandomEvent> {
                         let text = fs.readFileSync(file).toString();
                         const result = text.replace(/\/\/remove([\s\S]*?)\/\/remove/g, '');
                         eval(result);
-                        console.log('[REM]Loaded script file:', file);
+                        this.logger.info('[REM] 加载脚本文件完成:\n' + file);
                     } catch (error) {
-                        console.error('Failed to load script file:', file, error);
+                        this.logger.error({ message: '[REM] 加载脚本文件异常', file, error });
                     }
                 }
             });
