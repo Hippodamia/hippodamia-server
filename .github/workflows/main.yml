@@ -4,10 +4,12 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Setup bun
         uses: oven-sh/setup-bun@v1
         with:
           bun-version: latest
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: Bun Install
         run: bun i
       - name: Type Check
