@@ -13,6 +13,13 @@ import { RandomEventComponent, RandomEventManager } from "@/components/random-ev
 export const createRace: CommandRouter = async (ctx) => {
     const i18n = Hippodamia.instance.i18n
 
+    const channel_id = ctx.channel!.id;
+
+    if(roomService.getRoom(channel_id)){
+        ctx.reply(i18n['race.pre.exist_room'])
+        return;
+    }
+
     let mode = ctx.args!.mode;
 
     //根据别名以及key获取直接mode，判断本群是否可以使用这个模式

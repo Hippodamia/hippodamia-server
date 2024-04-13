@@ -1,23 +1,32 @@
 import fs from "fs";
+import { packageDirectorySync } from "pkg-dir";
 
 export class I18n {
 
-  translations: Record<string, string>;
+  translations: Record<string, string> = {};
 
   constructor(language: string, directory: string) {
-    const langFilePath = `${directory}/${language}.lang`;
     const langDefaultFilePath = `${directory}/${language}.lang`;
+    const langFilePath = `${directory}/${language}.lang`;
 
     console.log(`Loading translations from ${langFilePath} and ${langDefaultFilePath}`);
 
-    const langFileContent = fs.readFileSync(langFilePath, "utf-8");
-    const langDefaultFileContent = fs.readFileSync(langDefaultFilePath, "utf-8");
+    if (fs.existsSync(langDefaultFilePath)) {
+      const langDefaultFileContent = fs.readFileSync(langDefaultFilePath, "utf-8");
+      this.translations = { ...this.translations, ...this.parseLanguageFile(langDefaultFileContent) };
+    }
 
-    this.translations = this.parseLanguageFile(langFileContent);
-    this.translations = this.parseLanguageFile(langDefaultFileContent);
+    if (fs.existsSync(langFilePath)) {
+      const langFileContent = fs.readFileSync(langFilePath, "utf-8");
+      this.translations = { ...this.translations, ...this.parseLanguageFile(langFileContent)};
+    }
+
+
+
   }
 
   parseLanguageFile(content: string): Record<string, string> {
+
     const translations: Record<string, string> = {};
     const lines = content.split("\n");
     for (const line of lines) {

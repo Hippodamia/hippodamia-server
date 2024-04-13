@@ -151,7 +151,10 @@ const settings = ServerSettingsManager.instance.settings
 
 switch (settings.mode) {
     case 'onebot':
-        bot.load(new OneBotAdapter(settings.onebot))
+        if(!bot.adapters.find(adapter => adapter.constructor.name === 'OneBotAdapter'))
+            bot.load(new OneBotAdapter(settings.onebot))
+        else
+            bot.logger.info('OneBotAdapter already loaded')
     case 'test':
     //@ts-ignore
     //bot.load(new SandboxAdapter("reverse"))
