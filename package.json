@@ -19,8 +19,8 @@
   },
   "dependencies": {
     "@hippodamia/adapter-sandbox": "^0.1.0-beta",
-    "@hippodamia/bot": "link:@hippodamia/bot",
-    "@hippodamia/core": "link:@hippodamia/core",
+    "@hippodamia/bot": "^1.2.0",
+    "@hippodamia/core": "^1.0.3",
     "@mechanicalhuman/bunyan-pretty": "^3.1.0",
     "bunyan": "^1.8.15",
     "drizzle-orm": "^0.30.6",
