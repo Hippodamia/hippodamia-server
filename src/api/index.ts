@@ -36,7 +36,7 @@ app.register(groups_settings)
 
 async function startListen() {
     const {port}  = ServerSettingsManager.instance.settings.api
-    Hippodamia.instance.bot.logger.info(`[Hippodamia Server] 服务启动于127.0.0.1:${port}`)
+    Hippodamia.instance.logger.info(`[Hippodamia Server] 服务启动于127.0.0.1:${port}`)
     await app.listen({ port: port, host: '127.0.0.1' })
 }
 

@@ -18,24 +18,47 @@ import { RandomEventManager } from './components/random-events/RandomEventManage
 import * as fs from 'fs';
 import { packageDirectorySync } from 'pkg-dir';
 
-
+import inquirer from 'inquirer'
 
 console.log('Hippodamia Server 启动中...')
 
 // 根据启动参数载入配置文件
 const arg = process.argv.length > 2 ? process.argv[2] : undefined;
 
-const setting_path = `${packageDirectorySync()}/config/settings${arg ? '.' : ''}${arg}.json`;
+
+let setting_path: string;
+if (arg) {
+
+    setting_path = `${packageDirectorySync()}/config/settings${arg ? '.' : ''}${arg}.json`;
+
+    console.log('使用配置文件:', setting_path)
+} else {
+
+    const files = fs.readdirSync(`${packageDirectorySync()}/config/`)
+        .filter(file => file.startsWith('settings') && file.endsWith('.json'))
+
+
+    const select = await inquirer.prompt({
+        type: 'list',
+        name: 'file',
+        message: '请选择配置文件',
+        choices: files
+    })
+
+    setting_path = `${packageDirectorySync()}/config/${select.file}`
+
+    console.log('使用配置文件:', setting_path)
+
+}
+
 
 new ServerSettingsManager(fs.existsSync(setting_path) ? setting_path : undefined);
-
-console.log('配置文件:', setting_path)
-
 
 // 初始化Hippodamia核心
 
 new Hippodamia()
 
+const logger = Hippodamia.instance.logger;
 
 const bot = Hippodamia.instance.bot;
 
@@ -112,7 +135,7 @@ bot.cmd('/hippodamia|赛马 config', RouteWithPermission(Routers.hippodamiaRoute
 
 bot.cmd('/wiki|图鉴 event|事件|re list|l|列表 <page>', (ctx) => {
     let page
-    if (ctx.args?.page && !isNaN(Number(ctx.args?.page)) ) 
+    if (ctx.args?.page && !isNaN(Number(ctx.args?.page)))
         page = Number(ctx.args?.page)
     else
         page = 1
@@ -135,23 +158,20 @@ bot.cmd('赫尔好可爱', (ctx) => {
 bot.cmd('抢劫小马商店', (ctx) => {
     ctx.reply('商店还没开放呢...')
 })
+logger.info('命令路由加载完成')
 
 //载入核心数据
 //载入scripts
-new RandomEventManager()
+new RandomEventManager(logger)
 RandomEventManager.instance.loadRandomEvents()
 
 
 //bot.load(new OPQAdapter('198.18.0.1:8086'))
-
-
-
-
 const settings = ServerSettingsManager.instance.settings
 
 switch (settings.mode) {
     case 'onebot':
-        if(!bot.adapters.find(adapter => adapter.constructor.name === 'OneBotAdapter'))
+        if (!bot.adapters.find(adapter => adapter.constructor.name === 'OneBotAdapter'))
             bot.load(new OneBotAdapter(settings.onebot))
         else
             bot.logger.info('OneBotAdapter already loaded')
@@ -159,10 +179,12 @@ switch (settings.mode) {
     //@ts-ignore
     //bot.load(new SandboxAdapter("reverse"))
 }
+logger.info('配置->加载器')
 
 
 
 
+logger.info('启动 HTTP API服务')
 
 startListen().then().catch(e => console.log(e));
 

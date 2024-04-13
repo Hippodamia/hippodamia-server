@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
-
+import Logger from "bunyan";
+import { BaseLogger } from "@hippodamia/bot";
 /**
  * Recursively reads files in a directory and applies a handler function to each file.
  *
@@ -73,4 +74,14 @@ type I18nType = {
   [key: string]: string;
 };
 
-
+export function wrapLogger(level: BaseLogger['level'], logger: Logger): BaseLogger {
+  return {
+    level: level,
+    info: (data: any | string) => logger.info(data),
+    error: (data: any) => logger.error(data),
+    debug: (data: any) => logger.debug(data),
+    warn: (data: any) => logger.warn(data),
+    trace: (data: any) => logger.trace(data),
+    fatal: (data: any) => logger.fatal(data)
+  }
+}

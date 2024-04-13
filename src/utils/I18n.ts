@@ -1,3 +1,4 @@
+import { BaseLogger } from "@hippodamia/bot";
 import fs from "fs";
 import { packageDirectorySync } from "pkg-dir";
 
@@ -5,11 +6,12 @@ export class I18n {
 
   translations: Record<string, string> = {};
 
-  constructor(language: string, directory: string) {
-    const langDefaultFilePath = `${directory}/${language}.lang`;
+  constructor(language: string, directory: string, logger: BaseLogger) {
+    const langDefaultFilePath = `${directory}/${language}_default.lang`;
     const langFilePath = `${directory}/${language}.lang`;
 
-    console.log(`Loading translations from ${langFilePath} and ${langDefaultFilePath}`);
+    logger.info(`正在加载所选语言文件: ${langFilePath}`);
+    logger.info(`正在加载默认语言文件: ${langDefaultFilePath}`);
 
     if (fs.existsSync(langDefaultFilePath)) {
       const langDefaultFileContent = fs.readFileSync(langDefaultFilePath, "utf-8");
@@ -18,7 +20,7 @@ export class I18n {
 
     if (fs.existsSync(langFilePath)) {
       const langFileContent = fs.readFileSync(langFilePath, "utf-8");
-      this.translations = { ...this.translations, ...this.parseLanguageFile(langFileContent)};
+      this.translations = { ...this.translations, ...this.parseLanguageFile(langFileContent) };
     }
 
 
