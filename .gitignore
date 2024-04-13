@@ -7,4 +7,4 @@ node_modules
 .vscode
 .idea
 
-hippodamia-server.bun
+hippodamia-server
