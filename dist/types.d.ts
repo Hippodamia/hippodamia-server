@@ -1,24 +1,9 @@
-declare module "src/OPQAdapter" {
-    import { Adapter, Bot } from "@hippodamia/bot";
-    export class OPQAdapter implements Adapter {
-        baseUrl: string;
-        ws: WebSocket;
-        bot: string;
-        info: {
-            version: string;
-            name: string;
-            desc: string;
-        };
-        constructor(url?: string);
-        send(content: string | string[], target: {
-            channel?: string;
-            user?: string;
-        }): void;
-        init?(bot: Bot): void;
-    }
-}
+/// <reference types="ws" />
+/// <reference types="bunyan" />
 declare module "src/OnebotAdapter" {
     import { Adapter, Bot } from "@hippodamia/bot";
+    import { Message } from "onebot-client";
+    import { WebSocket } from "ws";
     export type OneBotConfig = {
         mode: 'http';
         port: number;
@@ -26,9 +11,9 @@ declare module "src/OnebotAdapter" {
         api: string;
     } | {
         mode: 'ws';
-        host: string;
-        port: number;
+        url: string;
         secret?: string;
+        bot: string;
     } | {
         mode: 'null';
     };
@@ -38,33 +23,35 @@ declare module "src/OnebotAdapter" {
             name: string;
             desc: string;
         };
-        api?: string;
+        api: {
+            sendGroupMessage: (group_id: string, message: string, auto_escape?: boolean) => Promise<number>;
+            sendPrivateMessage: (user_id: string, message: string, auto_escape?: boolean) => Promise<number>;
+        };
         bot: Bot;
+        config: OneBotConfig;
+        client?: OneBotWsClient;
+        private getApiUrl;
+        private http_apis;
         constructor(config: OneBotConfig);
         send(content: string | string[], target: {
             channel?: string | undefined;
             user?: string | undefined;
         }): void;
+        /**
+         * 初始化bot与消息处理器
+         * @param bot
+         * @returns
+         */
         init?(bot: Bot): void;
         handler: {
-            message: (event: MessageEvent) => string;
+            message: (event: Message) => string;
         };
     }
-    interface MessageEvent {
-        post_type: 'message';
-        /** 消息类型 */
-        message_type: string;
-        /** 消息子类型 */
-        sub_type: string;
-        /** 消息 ID */
-        message_id: number;
-        /** 发送者 QQ 号 */
-        user_id: number;
-        /** 消息内容 */
-        /** 原始消息内容 */
-        raw_message: string;
-        /** 字体 */
-        font: number;
+    class OneBotWsClient {
+        ws: WebSocket;
+        constructor(url: string, bot_id: number, secret: string);
+        apis: OneBotAdapter['api'];
+        private sendAction;
     }
 }
 declare module "src/bot/templates/commonTemplate" {
@@ -165,8 +152,8 @@ declare module "src/data/userDataService" {
     export class UserDataService {
         private platform_id;
         constructor(platform_id: string);
-        getUserCoins(): Promise<number | null | undefined>;
-        getUserNick(): Promise<string | null | undefined>;
+        getUserCoins(): Promise<number>;
+        getUserNick(): Promise<string>;
         /**
          * 获取用户信息
          */
@@ -230,21 +217,34 @@ declare module "src/types" {
         type?: 'global_limit' | 'user_limit' | 'no_limit';
         limit?: number;
     }
-    export type GameSettings = Partial<{
+    export type GameModeSetting = Partial<{
+        /** 速度: 0-20 */
+        speed: number;
+        /** 最少玩家数量 */
+        min_player: number;
+        /** 最多玩家数量 */
+        max_player: number;
+        /** 赛道长度 */
+        length: number;
+        /** 幸运 */
+        luck: number;
+        /** 效果抵抗 */
+        effect_resistance: number;
+        /** 内容排除 */
+        exclude: string[];
+        /** 前置模式 */
+        base_mode: string;
+        /** 消息间隔 */
+        interval: number;
+        /** 别名 */
+        alias: string[];
+    }>;
+    export type GroupSetting = Partial<{
         enable: boolean;
         admins: string[];
         cd: number;
         game: {
-            [key: string]: Partial<{
-                speed: number;
-                min_player: number;
-                max_player: number;
-                length: number;
-                luck: number;
-                effect_resistance: number;
-                exclude: string[];
-                base_mode: string;
-            }>;
+            [key: string]: GameModeSetting;
         };
     }>;
 }
@@ -253,15 +253,56 @@ declare module "src/api/groups_settings" {
     const routes: (fastify: FastifyInstance) => Promise<void>;
     export default routes;
 }
-declare module "src/api/index" {
-    function startListen(): Promise<void>;
-    export { startListen };
+declare module "src/utils/I18n" {
+    import { BaseLogger } from "@hippodamia/bot";
+    export class I18n {
+        translations: Record<string, string>;
+        constructor(language: string, directory: string, logger: BaseLogger);
+        parseLanguageFile(content: string): Record<string, string>;
+        translate(key: string): string;
+        build(): this;
+    }
 }
-declare module "src/bot/services/configService" {
-    import { Shop } from "src/types";
-    export function readShops(): Shop[];
+declare module "src/managers/ServerSettingsManager" {
+    import { OneBotConfig } from "src/OnebotAdapter";
+    interface HippodamiaAPISettings {
+        api: {
+            port: number;
+        };
+    }
+    type OnebotServerSettings = {
+        mode: 'onebot';
+        onebot: OneBotConfig;
+    };
+    type TestServerSettings = {
+        mode: 'test';
+        test: OneBotConfig;
+    };
+    type LoggingSettings = {
+        level: 'info' | 'debug' | 'warn' | 'error' | 'fatal' | 'trace';
+    };
+    type ServerSettings = HippodamiaAPISettings & (OnebotServerSettings | TestServerSettings) & {
+        logging: LoggingSettings;
+    };
+    export default class ServerSettingsManager {
+        static instance: ServerSettingsManager;
+        settings: ServerSettings;
+        path: string;
+        constructor(path?: string);
+        /**
+         * 读取settings.json下关于赛马服务器的配置信息
+         */
+        load(): boolean;
+        /**
+         * 获取默认的服务配置
+         * @returns 默认的设置
+         */
+        defaultSetttings(): ServerSettings;
+    }
 }
 declare module "src/utils" {
+    import Logger from "bunyan";
+    import { BaseLogger } from "@hippodamia/bot";
     /**
      * Recursively reads files in a directory and applies a handler function to each file.
      *
@@ -289,19 +330,14 @@ declare module "src/utils" {
      * @return {any[]} The shuffled array.
      */
     export const shuffle: (array: any[]) => any[];
-    export class I18n {
-        translations: Record<string, string>;
-        constructor(language: string, directory: string);
-        parseLanguageFile(content: string): Record<string, string>;
-        translate(key: string): string;
-        build(): this;
-    }
+    export function wrapLogger(level: BaseLogger['level'], logger: Logger): BaseLogger;
 }
 declare module "src/hippodamia" {
-    import { Bot } from "@hippodamia/bot";
-    import { I18n } from "src/utils";
+    import { BaseLogger, Bot } from "@hippodamia/bot";
+    import { I18n } from "src/utils/I18n";
     export class Hippodamia {
         static instance: Hippodamia;
+        logger: BaseLogger;
         i18n: I18n & {
             [key: string]: string;
         };
@@ -309,12 +345,21 @@ declare module "src/hippodamia" {
         constructor();
     }
 }
+declare module "src/api/index" {
+    function startListen(): Promise<void>;
+    export { startListen };
+}
+declare module "src/bot/services/configService" {
+    import { Shop } from "src/types";
+    export function readShops(): Shop[];
+}
 declare module "src/managers/GroupSettingsManager" {
-    import { GameSettings } from "src/types";
+    import { GameModeSetting, GroupSetting } from "src/types";
     export class GroupSettingsManager {
+        path: string;
         settings: {
-            'global': GameSettings;
-            [key: string]: GameSettings;
+            'global': GroupSetting;
+            [key: string]: GroupSetting;
         };
         static instance: GroupSettingsManager;
         constructor();
@@ -325,7 +370,11 @@ declare module "src/managers/GroupSettingsManager" {
             cd: number;
             game: {
                 [key: string]: Partial<{
-                    speed: number;
+                    speed: number; /**
+                     * 为群组进行设置
+                     * @param key 群组ID
+                     * @param modify 需要修改的设置
+                     */
                     min_player: number;
                     max_player: number;
                     length: number;
@@ -333,13 +382,37 @@ declare module "src/managers/GroupSettingsManager" {
                     effect_resistance: number;
                     exclude: string[];
                     base_mode: string;
+                    interval: number;
+                    alias: string[];
                 }>;
             };
         }>;
-        set(key: string, modify: Partial<GameSettings>): void;
+        /**
+         * 为群组进行设置
+         * @param key 群组ID
+         * @param modify 需要修改的设置
+         */
+        set(key: string, modify: Partial<GroupSetting>): void;
+        /**
+         * 获取对应群组的所有管理员，包括全局管理员
+         * @param channel 群组ID
+         * @returns 群组的管理员列表
+         */
         getAdminList(channel?: string): string[];
         private load;
         private save;
+        /**
+         * 获取对应群组的游戏模式设置
+         * 会根据默认配置<全局设置<分群设置来覆盖
+         * @param group 群组ID
+         * @returns 群组的游戏模式设置
+         */
+        getModes(group: string): {
+            'pure': GameModeSetting;
+            'random': GameModeSetting;
+        } & {
+            [key: string]: GameModeSetting;
+        };
     }
 }
 declare module "src/bot/routes/coins/userCoin" {
@@ -351,8 +424,22 @@ declare module "src/bot/services/RoomService" {
     class RoomService {
         private rooms;
         private allow_time_room;
+        /**
+         * 获取一个房间对象
+         * @param channelId
+         */
         getRoom(channelId: string): Room | undefined;
+        /**
+         * 新增一个房间，如果本群组存在这个房间，则会异常
+         * @param room 房间对象(信息)
+         * @returns
+         */
         createRoom(room: Room): boolean;
+        /**
+         * 删除指定群组的房间，并为这个群组设置冷却时常
+         * 冷却时常取决于群组设置中的 cd 字段
+         * @param channelId 群组ID
+         */
         removeRoom(channelId: string): void;
         addPlayer(roomId: string, player: PlayerInfo): void;
         refreshListUI(room: Room): void;
@@ -361,14 +448,75 @@ declare module "src/bot/services/RoomService" {
     export default roomService;
 }
 declare module "src/bot/templates/raceTemplate" {
-    export function raceCreatedTemplate(mode?: string): string;
+    const map: {
+        pure: string;
+        random: string;
+        contract: string;
+    };
+    export function raceCreatedTemplate(mode?: keyof typeof map): string;
     export function playerJoinedTemplate(nick: string, currentPlayerCount: number): string;
+}
+declare module "src/components/random-events/types" {
+    import { Horse, Race } from "@hippodamia/core";
+    export interface RandomEvent {
+        name: string;
+        alias: string;
+        type: RandomEventType;
+        desc: string;
+        handler: (race: Race, horse: Horse) => void;
+    }
+    export enum RandomEventType {
+        Positive = 0,
+        Negative = 1,
+        Neutral = 2
+    }
+}
+declare module "src/components/random-events/RandomEventComponent" {
+    import { HipEmitterTypes, IContentManager } from '@hippodamia/core';
+    import { RandomEvent } from "src/components/random-events/types";
+    import EventEmitter from 'eventemitter3';
+    export class RandomEventComponent extends EventEmitter<HipEmitterTypes> {
+        constructor(manager: IContentManager<RandomEvent>);
+        info(): {
+            name: string;
+            alias: string[];
+        };
+        name: string;
+    }
+}
+declare module "src/components/random-events/RandomEventManager" {
+    import { IContentManager } from '@hippodamia/core';
+    import { RandomEvent } from "src/components/random-events/types";
+    import { BaseLogger } from '@hippodamia/bot';
+    export class RandomEventManager implements IContentManager<RandomEvent> {
+        static instance: RandomEventManager;
+        logger: BaseLogger;
+        constructor(logger: BaseLogger);
+        getRandom(filter: (content: RandomEvent) => boolean): RandomEvent;
+        getAll(): RandomEvent[];
+        /**
+         * 随机事件的列表
+         */
+        events: Map<string, RandomEvent>;
+        register(event: RandomEvent): void;
+        get(name: string): RandomEvent | undefined;
+        listNames(): IterableIterator<string>;
+        loadRandomEvents(): void;
+    }
+}
+declare module "src/components/random-events/index" {
+    export * from "src/components/random-events/RandomEventComponent";
+    export * from "src/components/random-events/RandomEventManager";
+    export * from "src/components/random-events/types";
 }
 declare module "src/bot/routes/games/race" {
     import { CommandRouter } from "src/types";
     export const createRace: CommandRouter;
+    /** 加入命令的路由 */
     export const joinRace: CommandRouter;
+    /** fake player的路由 */
     export const addFakePlayer: CommandRouter;
+    /** 开始命令的路由 */
     export const startRace: CommandRouter;
 }
 declare module "src/bot/routes/shops/shop" {
@@ -388,86 +536,10 @@ declare module "src/bot/routes/index" {
     export * from "src/bot/routes/shops/shop";
     export * from "src/bot/routes/hippodamia/index";
 }
-declare module "src/managers/ServerSettingsManager" {
-    import { OneBotConfig } from "src/OnebotAdapter";
-    interface HippodamiaAPISettings {
-        api: {
-            port: number;
-        };
-    }
-    type OnebotServerSettings = {
-        mode: 'onebot';
-        onebot: OneBotConfig;
-    };
-    type TestServerSettings = {
-        mode: 'test';
-        test: OneBotConfig;
-    };
-    type ServerSettings = HippodamiaAPISettings & (OnebotServerSettings | TestServerSettings);
-    export default class ServerSettingsManager {
-        static instance: ServerSettingsManager;
-        settings: ServerSettings;
-        constructor();
-        /**
-         * 读取settings.json下关于赛马服务器的配置信息
-         */
-        load(): boolean;
-        /**
-         * 获取默认的服务配置
-         * @returns 默认的设置
-         */
-        defaultSetttings(): ServerSettings;
-    }
-}
-declare module "src/components/random-events/types" {
-    import { Horse, Race } from "@hippodamia/core";
-    export interface RandomEvent {
-        name: string;
-        alias: string;
-        type: RandomEventType;
-        desc: string;
-        handler: (race: Race, horse: Horse) => void;
-    }
-    export enum RandomEventType {
-        Positive = 0,
-        Negative = 1,
-        Neutral = 2
-    }
-}
-declare module "src/components/random-events/RandomEventManager" {
-    import { IContentManager } from '@hippodamia/core';
-    import { RandomEvent } from "src/components/random-events/types";
-    export class RandomEventManager implements IContentManager<RandomEvent> {
-        static instance: RandomEventManager;
-        constructor();
-        getRandom(filter: (content: RandomEvent) => boolean): RandomEvent;
-        getAll(): RandomEvent[];
-        /**
-         * 随机事件的列表
-         */
-        events: Map<string, RandomEvent>;
-        register(event: RandomEvent): void;
-        get(name: string): RandomEvent | undefined;
-        listNames(): IterableIterator<string>;
-        loadRandomEvents(): void;
-    }
-}
 declare module "src/app" { }
 declare module "src/bot/services/RandomService" {
     export function generateRandomText(length: number): string;
     export function generateRandomGameName(): string;
 }
-declare module "src/components/random-events/RandomEventComponent" {
-    import { HipEmitterTypes, IContentManager } from '@hippodamia/core';
-    import { RandomEvent } from "src/components/random-events/types";
-    import EventEmitter from 'eventemitter3';
-    export class RandomEventComponent extends EventEmitter<HipEmitterTypes> {
-        constructor(manager: IContentManager<RandomEvent>);
-        info(): {
-            name: string;
-            alias: string[];
-        };
-        name: string;
-    }
-}
+declare module "tests/test" { }
 declare module "tests/db.test" { }

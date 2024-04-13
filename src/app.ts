@@ -17,8 +17,6 @@ import { RandomEventManager } from './components/random-events/RandomEventManage
 import * as fs from 'fs';
 import { packageDirectorySync } from 'pkg-dir';
 
-import inquirer from 'inquirer'
-
 console.log('Hippodamia Server 启动中...')
 
 // 根据启动参数载入配置文件

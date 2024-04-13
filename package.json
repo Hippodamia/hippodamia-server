@@ -6,7 +6,9 @@
     "db:studio": "drizzle-kit studio",
     "test": "bun test",
     "dev": "bun --hot run src/app.ts",
-    "dev-ws": "bun --hot run src/app.ts ws"
+    "dev-ws": "bun --hot run src/app.ts ws",
+    "build-linux":"bun build src/app.ts --compile --outfile=hippodamia-server",
+    "build-win":"bun build src/app.ts --compile --outfile=hippodamia-server.exe"
   },
   "devDependencies": {
     "@types/bun": "latest",
