@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "module": "ESNext",
+        "moduleResolution": "Node",
+        "target": "ES2020",
+        "allowImportingTsExtensions": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+        "strict": true,
+        "checkJs": true
+    },
+    "include": [
+        "./**/*.js"
+    ],
+    "typeAcquisition": {
+        "enable": true,
+        "include": [
+            "@hippodamia/core"
+        ]
+        
+    }
+}

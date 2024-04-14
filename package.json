@@ -6,6 +6,7 @@
   "scripts": {
     "db:studio": "drizzle-kit studio",
     "test": "bun test",
+    "test-events":"bun run tests/random_events.ts",
     "dev": "bun --hot run src/app.ts",
     "dev-ws": "NODE_ENV=development bun --hot run src/app.ts ws",
     "build-linux":"bun build src/app.ts --compile --outfile=hippodamia-server",

@@ -192,7 +192,7 @@ export const startRace: CommandRouter = async (ctx) => {
 
 //todo 增加多平台不同的渲染方式
 /** 渲染当前比赛的文本 */
-function renderRace(race: Race): string {
+export function renderRace(race: Race): string {
     return [
         ...race.logs.map(x => x.content),
         '---',

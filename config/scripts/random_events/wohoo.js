@@ -1,26 +1,15 @@
 //remove
-/// <reference path="../../../dist/types.d.ts" />
-const {Horse} = require("core/Horse")
-const {Race} = require("core/Race")
-const {EffectType} = require("core/types")
-const { RandomEventManager } = require("src/components/random-events/RandomEventManager")
-
+const { RandomEventManager } = require("../../../src/components/random-events")
+const { HorseUtils } = require("../../../src/utils/HorseUtils")
 //remove
 
 /**
- * @typedef {Object} RandomEvent
- * @property {string} name - 唯一name使用系列.xxx来确定
- * @property {string} alias - 别名,用于中文的表示
- * @property {number} type - 类型
- * @property {string} desc - 简化的描述
- * @property {(race: Race, horse: Horse) => void} handler - 处理函数
+ * @typedef {import("../../../src/components/random-events").RandomEvent} RandomEvent
+ * @typedef {import("@hippodamia/core").HorseProperty} HorseProperty
+ * @typedef {import("@hippodamia/core").Buff<HorseProperty>} Buff
+ * @typedef {import("@hippodamia/core").Race} Race
+ * @typedef {import("@hippodamia/core").Horse} Horse
  */
-
-
-/**
- * @typedef {import("core/types").Buff<import("core/Horse").HorseProperty>} Buff
- */
-
 
 /**
  * woohoo buff
@@ -75,7 +64,9 @@ const gold_woohoo_power = {
     }
 }
 
-
+/**
+* @type {RandomEvent}
+*/
 const brilliant_woohoo_power = {
     name: 'woohoo.power.brilliant',
     alias: '璀璨芜湖力量',
@@ -87,7 +78,9 @@ const brilliant_woohoo_power = {
         race.pushLog(horse, '%player%被璀璨的五彩斑斓之光包裹,直接前进了3格');
     }
 }
-
+/**
+* @type {RandomEvent}
+*/
 const supreme_woohoo_power = {
     name: 'woohoo.power.supreme',
     alias: '至尊芜湖力量',
@@ -99,7 +92,9 @@ const supreme_woohoo_power = {
         race.pushLog(horse, '%player%被难以言表的至尊力量包裹,直接越过了4格');
     }
 }
-
+/**
+* @type {RandomEvent}
+*/
 const ultrafast_dark_woohoo = {
     name: 'woohoo.power.ultrafast_dark',
     alias: '超速黑暗芜湖',
@@ -123,7 +118,8 @@ const ultrafast_dark_woohoo = {
             },
             listeners: {
                 'buff.end': (ctx) => {
-                    ctx.horse.Property = {...ctx.horse.Property, status: 1}
+                    //@ts-ignore
+                    ctx.horse.Property = { ...ctx.horse.Property, status: 1 }
                     console.debug('选手死亡')
                 }
             }
@@ -199,7 +195,8 @@ const friendship_magic_woohoo = {
     desc: '友谊带来了神奇的芜湖力量',
     handler: (race, horse) => {
         for (let horse of race.getHorses()) {
-            horse.move(horse.track.segments.length); // move all horses to the end of track
+            if (horse.track)
+                horse.move(horse.track.segments.length); // move all horses to the end of track
         }
         race.pushLog(horse, '友谊的魔法发动,所有参赛者都被芜湖力量包裹,一同冲向了终点!');
     }
@@ -217,10 +214,10 @@ const woohoo_staff_v12 = {
     handler: (race, horse) => {
         horse.buffContainer.add(wohoo_buff, 99, 1)
         const effects = [
-            {desc: '获得了加速魔法,速度永久提升1', handler: () => horse.Property.speed += 1},
-            {desc: '获得了加加速魔法,速度永久提升2', handler: () => horse.Property.speed += 2},
-            {desc: '获得了抵抗魔法,效果抵抗永久提升10%', handler: () => horse.Property.effect_resistance += 0.1},
-            {desc: '获得了步数提升魔法,前进一格1', handler: () => horse.step += 1},
+            { desc: '获得了加速魔法,速度永久提升1', handler: () => horse.Property.speed += 1 },
+            { desc: '获得了加加速魔法,速度永久提升2', handler: () => horse.Property.speed += 2 },
+            { desc: '获得了抵抗魔法,效果抵抗永久提升10%', handler: () => horse.Property.effect_resistance += 0.1 },
+            { desc: '获得了步数提升魔法,前进一格1', handler: () => horse.step += 1 },
         ];
         const randomEffect = effects[Math.floor(Math.random() * effects.length)];
         randomEffect.handler();
@@ -240,7 +237,7 @@ const woohoo_coffee = {
     type: 0, // Positive
     desc: '超验芜湖左旋咖啡,令人倍感精神',
     handler: (race, horse) => {
-        horse.Property = {...horse.Property, speed: horse.Property.speed + 3};
+        horse.Property = { ...horse.Property, speed: horse.Property.speed + 3 };
         race.pushLog(horse, '%player%喝下了一杯芜湖咖啡,感觉精神倍加,速度提升!');
     }
 }
@@ -257,6 +254,9 @@ const youDontUnderstandWoohoo = {
     handler: (race, horse) => {
         horse.buffContainer.add(wohoo_buff, 99, 1)
 
+        /**
+         * @type {Buff}
+         */
         const doubtfulStatus = {
             name: '怀疑',
             type: 1,
@@ -283,7 +283,10 @@ const youDontUnderstandWoohoo = {
     }
 }
 
-// 定义一个新的 RandomEvent 类型
+/**
+ * 芜湖小猫
+ * @type {RandomEvent}
+ */
 const luckyCatEvent = {
     name: "woohoo.luckyCat",
     alias: "芜湖小猫",

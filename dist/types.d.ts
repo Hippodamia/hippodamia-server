@@ -536,10 +536,17 @@ declare module "src/bot/routes/index" {
     export * from "src/bot/routes/shops/shop";
     export * from "src/bot/routes/hippodamia/index";
 }
+declare module "src/update" {
+    export const version = "1.0.0-alpha";
+    export function update(): Promise<boolean>;
+    /**
+     * 更新config下的内容
+     */
+    export function updateContents(): Promise<void>;
+}
 declare module "src/app" { }
 declare module "src/bot/services/RandomService" {
     export function generateRandomText(length: number): string;
     export function generateRandomGameName(): string;
 }
-declare module "tests/test" { }
 declare module "tests/db.test" { }

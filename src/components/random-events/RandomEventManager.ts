@@ -6,6 +6,9 @@ import * as path from "node:path"
 import * as fs from "node:fs"
 import { BaseLogger } from '@hippodamia/bot';
 
+import vm from 'node:vm'
+import { HorseUtils } from '@/utils/HorseUtils';
+
 
 export class RandomEventManager implements IContentManager<RandomEvent> {
 
@@ -59,6 +62,12 @@ export class RandomEventManager implements IContentManager<RandomEvent> {
     }
 
     loadRandomEvents() {
+        const ctx = vm.createContext(
+            {
+                RandomEventManager,
+                HorseUtils
+            }
+        );
         const root = packageDirectorySync() + '/config/scripts/random_events';
         if (root) {
             getFilesRecursively(root).forEach((file) => {
@@ -66,7 +75,8 @@ export class RandomEventManager implements IContentManager<RandomEvent> {
                     try {
                         let text = fs.readFileSync(file).toString();
                         const result = text.replace(/\/\/remove([\s\S]*?)\/\/remove/g, '');
-                        eval(result);
+                        //eval(result);
+                        vm.runInContext(result, ctx);
                         this.logger.info('[REM] 加载脚本文件完成:\n' + file);
                     } catch (error) {
                         this.logger.error({ message: '[REM] 加载脚本文件异常', file, error });

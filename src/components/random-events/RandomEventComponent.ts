@@ -2,6 +2,8 @@ import { HipComponent, HipEmitterTypes, Horse, IContentManager, Race } from '@hi
 import { RandomEvent } from './types';
 import EventEmitter from 'eventemitter3';
 
+import { HorseUtils } from '@/utils/HorseUtils';
+
 export class RandomEventComponent extends EventEmitter<HipEmitterTypes> {
     constructor(manager: IContentManager<RandomEvent>) {
         super();
@@ -12,7 +14,7 @@ export class RandomEventComponent extends EventEmitter<HipEmitterTypes> {
             if (Math.random() < 0.5) {
                 //从事件列表中获取一个事件
                 const random = manager.getRandom(() => true);
-                console.debug('[REM]执行事件:' + random.name + '->' + horse.raw_display)
+                console.debug(`[REM]执行事件:${random.name}(${random.alias})->${horse.display}`)
                 //为玩家数据库增加玩家触发事件的记录
                 random.handler(race, horse)
             }

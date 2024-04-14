@@ -1,23 +1,17 @@
 //remove
-const {Horse,Race} = require("@hippodamia/core")
-const {HippodamiaRandomEventManager} = require("hippodamia")
-const {HorseStatus} = require("core/types");
+/// <reference path="../../../dist/types.d.ts" />
+const {Horse,Race,EffectType} = require("@hippodamia/core")
+const {RandomEventManager,RandomEventType} = require("../../../src/components/random-events/index")
 
 //remove
 
 /**
- * @typedef {Object} RandomEvent
- * @property {string} name - 唯一name使用系列.xxx来确定
- * @property {string} alias - 别名,用于中文的表示
- * @property {number} type - 类型
- * @property {string} desc - 简化的描述
- * @property {(race: Race, horse: Horse) => void} handler - 处理函数
+ * @typedef {import("../../../src/components/random-events").RandomEvent} RandomEvent
+ * @typedef {import("@hippodamia/core").HorseProperty} HorseProperty
+ * @typedef {import("@hippodamia/core").Buff<HorseProperty>} Buff
  */
 
 
-/**
- * @typedef {import("core/types").Buff<import("core/Horse").HorseProperty>} Buff
- */
 
 /**
  * @type {Buff}
