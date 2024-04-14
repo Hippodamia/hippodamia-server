@@ -1,0 +1,14 @@
+{
+    "mode":"onebot",
+    "onebot": {
+        "mode": "http",
+        "port": 11455,
+        "api": "http://127.0.0.1:3000/"
+    },
+    "api":{
+        "port": 12778
+    },
+    "logging":{
+        "level": "debug"
+    }
+}

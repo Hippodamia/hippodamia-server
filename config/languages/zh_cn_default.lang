@@ -1,24 +1,32 @@
 # 使用%space%来表示非文本内空格。即 key = 12 3 会被解释为 key=12 3 而 key = %space%123 才会在第一位出现空格
 
+# 比赛房间创建成功 %mode% 模式中文名
+race.pre.created = > 比赛创建完毕!\n> 房间模式: %mode%\n> 发送 /加入赛马 <名称> 来加入比赛!
+
+# 房间已存在
+race.pre.exist_room = 房间已经创建好啦!\n- 使用 /加入赛马 [昵称] 来加入赛马!
+
+# 房间不存在
+race.pre.no_room = 房间似乎不存在!\n- 请使用 /创建赛马 <模式(random|pure)> 来创建一个新的房间\n- 例如 /创建赛马 random 来创建随机事件模式、
+
+# 玩家数量不足
+race.start.not_enough_player = 玩家数量不足!\n- 使用 /加入赛马 [昵称] 来加入赛马!\n- 例如 /加入赛马 🐔
+
+# 已经加入过比赛
+race.join.already_joined = 你已经加入过这场比赛咯!
+
+# 比赛已经开始了
+race.join.already_started = 😮比赛似乎已经开始咯
+
+# 比赛任务进程错误，%error%变量表示具体的错误信息
+race.task.error = 出现以下错误:\n%error%
+
 # 用于定义比赛结束后，发送的获胜者以及排行榜消息
 race.end.ranking.winners.title = 🏆比赛结束，获胜者:
 race.end.ranking.content =
 
 # 展示其他选手排名时的标题
 race.end.ranking.others.title = 🏅其他选手排名: 
-
-# 房间已存在
-race.pre.exist_room = 房间已经创建好啦!\n- 使用 /加入赛马 [昵称] 来加入赛马!
-# 房间不存在
-race.pre.no_room = 房间似乎不存在!\n- 请使用 /创建赛马 <模式(random|pure)> 来创建一个新的房间\n- 例如 /创建赛马 random 来创建随机事件模式、
-# 玩家数量不足
-race.start.not_enough_player = 玩家数量不足!\n- 使用 /加入赛马 [昵称] 来加入赛马!\n- 例如 /加入赛马 🐔
-# 已经加入过比赛
-race.join.already_joined = 你已经加入过这场比赛咯!
-# 比赛任务进程错误，%error%变量表示具体的错误信息
-race.task.error = 出现以下错误:\n%error%
-# 比赛已经开始了
-race.join.already_started = 😮比赛似乎已经开始咯
 
 # 权限
 bot.no_permission = 你没有权限执行这个指令!

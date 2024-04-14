@@ -16,8 +16,14 @@ import { RandomEventManager } from './components/random-events/RandomEventManage
 
 import * as fs from 'fs';
 import { packageDirectorySync } from 'pkg-dir';
+import { update } from "./update";
 
 console.log('Hippodamia Server 启动中...')
+
+
+if(!await update())
+    process.exit(0)
+
 
 // 根据启动参数载入配置文件
 const arg = process.argv.length > 2 ? process.argv[2] : undefined;
@@ -41,6 +47,8 @@ if (arg) {
 }
 
 console.log('使用配置文件:', setting_path)
+
+
 new ServerSettingsManager(fs.existsSync(setting_path) ? setting_path : undefined);
 
 // 初始化Hippodamia核心
@@ -152,7 +160,6 @@ logger.info('命令路由加载完成')
 //载入核心数据
 //载入scripts
 new RandomEventManager(logger)
-RandomEventManager.instance.loadRandomEvents()
 
 
 //bot.load(new OPQAdapter('198.18.0.1:8086'))
@@ -171,9 +178,8 @@ switch (settings.mode) {
 logger.info('配置->加载器')
 
 
-
-
 logger.info('启动 HTTP API服务')
 
+console.log('温馨提示:请不要修改config内任何官方发布的文件(包括random_events下的事件脚本,languages下的default文件),这些内容会在版本更新时被强制替换成最新版本')
 startListen().then().catch(e => console.log(e));
 

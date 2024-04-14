@@ -2,6 +2,7 @@
   "name": "tes",
   "module": "index.ts",
   "type": "module",
+  "version": "1.0.0-alpha",
   "scripts": {
     "db:studio": "drizzle-kit studio",
     "test": "bun test",

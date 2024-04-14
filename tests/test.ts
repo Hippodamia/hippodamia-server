@@ -1,16 +1,17 @@
-import { WebSocket } from "ws";
+// import { WebSocket } from "ws";
 
-const socket = new WebSocket("ws://127.0.0.1:3001");
-socket.onopen = () => {
-    console.log("Connected to server");
-};
-socket.onerror = (error) => {
-    console.log("WebSocket error:", error);
-};
-console.log(socket.isPaused)
-socket.send("Hello, server!");
+// const socket = new WebSocket("ws://127.0.0.1:3001");
+// socket.onopen = () => {
+//     console.log("Connected to server");
+// };
+// socket.onerror = (error) => {
+//     console.log("WebSocket error:", error);
+// };
+// console.log(socket.isPaused)
+// socket.send("Hello, server!");
 
 
+eval("console.log('Hello, world!')")
 
 // import {bot} from '../src/app';
 // import {Race} from "./core/Race";

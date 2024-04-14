@@ -1,7 +1,5 @@
 //remove
-/// <reference path="../../../dist/types.d.ts" />
-const {Horse} = require("core/Horse")
-const {Race} = require("core/Race")
+const {Horse,Race} = require("@hippodamia/core")
 const {HippodamiaRandomEventManager} = require("hippodamia")
 const {HorseStatus} = require("core/types");
 

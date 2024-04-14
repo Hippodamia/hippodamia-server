@@ -1,3 +1,5 @@
+import { Hippodamia } from "@/hippodamia"
+
 const map = {
     'pure': '纯净赛场',
     'random': '随机事件',
@@ -5,14 +7,7 @@ const map = {
 }
 export function raceCreatedTemplate(mode: keyof typeof map = 'pure') {
 
-
-
-    return [
-        '> 🐎比赛创建完毕!',
-        '> 本群开启了新的比赛!',
-        `> 比赛采用了:${map[mode]}模式`,
-        '> 使用 /加入赛马 <nick> 来加入比赛',
-        '> 例如: /加入赛马 辞小镜'].join('\n')
+    return Hippodamia.instance.i18n['race.created.message'].replace('%mode%', map[mode])
 }
 
 export function playerJoinedTemplate(nick: string, currentPlayerCount: number) {
