@@ -1,3 +1,4 @@
+import { resolve } from "path";
 import c from "child_process";
 import fs from "fs";
 
@@ -24,6 +25,8 @@ export async function update() {
         return false;
     }
 
+    await updateContents()
+
     return true;
 }
 
@@ -45,7 +48,7 @@ export async function updateContents() {
 
 
     for (const content of content_list) {
-        const path = __dirname + content;
+        const path = resolve('.' + content);
         const resp = await fetch('https://gitee.com/heerkaisair/hippodamia-server/raw/main' + content)
         if (!resp.ok) {
             console.log(`[更新检测] 无法获取${content}文件, 请检查网络连接或稍后再试`)

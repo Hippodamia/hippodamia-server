@@ -20,9 +20,9 @@ import { update } from "./update";
 
 console.log('Hippodamia Server 启动中...')
 
-
-if(!await update())
+if (Bun.env.NODE_ENV != 'development' && !await update())
     process.exit(0)
+
 
 
 // 根据启动参数载入配置文件
