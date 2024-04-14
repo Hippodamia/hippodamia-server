@@ -15,10 +15,19 @@ import { OneBotAdapter } from './OnebotAdapter';
 import { RandomEventManager } from './components/random-events/RandomEventManager';
 
 import * as fs from 'fs';
+import { resolve } from 'path';
 import { packageDirectorySync } from 'pkg-dir';
 import { update } from "./update";
+import { version } from "bun";
 
 console.log('Hippodamia Server 启动中...')
+
+
+if (!fs.existsSync(resolve('./package.json')))
+    fs.writeFileSync(resolve('./package.json'), JSON.stringify({
+        name: 'hippodamia-server',
+        version
+    }))
 
 if (Bun.env.NODE_ENV != 'development' && !await update())
     process.exit(0)

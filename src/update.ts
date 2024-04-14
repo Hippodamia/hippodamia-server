@@ -41,9 +41,7 @@ export async function updateContents() {
         '/config/scripts/README.md',
         /** 语言配置内容 */
         '/config/languages/zh_cn_default.lang',
-        '/config/settings.default.json',
-        /** 同步包json */
-        '/package.json'
+        '/config/settings.default.json'
     ]
 
 
