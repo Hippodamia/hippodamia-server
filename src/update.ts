@@ -1,6 +1,7 @@
 import { resolve } from "path";
 import c from "child_process";
 import fs from "fs";
+import { dirname } from "path";
 
 
 export const version = "1.0.0-alpha";
@@ -38,6 +39,7 @@ export async function updateContents() {
         /** 随机事件内容 */
         '/config/scripts/random_events/114514.js',
         '/config/scripts/random_events/wohoo.js',
+        '/config/scripts/random_events/developer_heer.js',
         '/config/scripts/README.md',
         /** 语言配置内容 */
         '/config/languages/zh_cn_default.lang',
@@ -56,6 +58,9 @@ export async function updateContents() {
         if (fs.existsSync(path))
             fs.rmSync(path, { force: true });
 
+        const dir = dirname(path)
+        fs.existsSync(dir) || fs.mkdirSync(dir, { recursive: true });
+        
         fs.writeFileSync(path, await resp.text());
         console.log(`[更新检测] ${content}文件更新成功`);
     };

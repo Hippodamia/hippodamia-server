@@ -2,6 +2,8 @@ import fs from "fs";
 import path from "path";
 import Logger from "bunyan";
 import { BaseLogger } from "@hippodamia/bot";
+const { logger } = require('nonalog')
+
 /**
  * Recursively reads files in a directory and applies a handler function to each file.
  *
@@ -74,6 +76,45 @@ type I18nType = {
   [key: string]: string;
 };
 
+class NonaLogger implements BaseLogger {
+  logger: any
+  level: BaseLogger['level']
+  constructor(service: string, level: BaseLogger['level']) {
+    this.logger = logger(service)
+    this.level = level
+  }
+
+  stringify(data: any): string {
+    if( typeof data === 'string' ){
+      return data
+    }else{
+      return JSON.stringify(data, null, 2)
+    }
+  }
+
+  info(data: any | string) {
+    this.logger.info(this.stringify(data))
+  }
+
+  error(data: any) {
+    this.logger.error(this.stringify(data))
+  }
+  debug(data: any) {
+    this.logger.debug(this.stringify(data))
+  }
+  warn(data: any) {
+    this.logger.info(this.stringify(data))
+  }
+  trace(data: any) {
+    this.logger.trace(this.stringify(data))
+  }
+  fatal(data: any) {
+    this.logger.error(this.stringify(data))
+  }
+
+
+}
+
 export function wrapLogger(level: BaseLogger['level'], logger: Logger): BaseLogger {
   return {
     level: level,
@@ -84,4 +125,8 @@ export function wrapLogger(level: BaseLogger['level'], logger: Logger): BaseLogg
     trace: (data: any) => logger.trace(data),
     fatal: (data: any) => logger.fatal(data)
   }
+}
+
+export function createNanoLogger(service: string, level: BaseLogger['level']): BaseLogger {
+  return new NonaLogger(service, level)
 }

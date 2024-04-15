@@ -7,13 +7,14 @@
     "db:studio": "drizzle-kit studio",
     "test": "bun test",
     "start": "bun run src/app.ts",
-    "test-events":"bun run tests/random_events.ts",
-    "dev:prod":"NODE_ENV=production bun --hot run src/app.ts",
+    "test-events": "bun run tests/random_events.ts",
+    "dev:prod": "NODE_ENV=production bun --hot run src/app.ts",
     "dev": "NODE_ENV=development bun --hot run src/app.ts",
     "dev-ws": "NODE_ENV=development bun --hot run src/app.ts ws",
     "dev:remote": "NODE_ENV=development bun --hot run src/app.ts remote",
-    "build-linux":"bun build src/app.ts --compile --outfile=hippodamia-server",
-    "build-win":"bun build src/app.ts --compile --outfile=hippodamia-server.exe"
+    "build-linux": "bun build src/app.ts --compile --outfile=hippodamia-server",
+    "build-win": "bun build src/app.ts --compile --outfile=hippodamia-server.exe",
+    "bundle": "bun build ./src/app.ts --outfile=bundle.js --target=bun"
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -34,6 +35,7 @@
     "eventemitter3": "^5.0.1",
     "fastify": "^4.26.2",
     "json5": "^2.2.3",
+    "nonalog": "^1.0.6",
     "onebot-client": "^1.1.1",
     "pkg-dir": "^8.0.0",
     "ws": "^8.16.0"

@@ -5,7 +5,7 @@ import ServerSettingsManager from "./managers/ServerSettingsManager";
 import { packageDirectorySync } from "pkg-dir";
 
 import { createLogger } from "bunyan";
-import { wrapLogger } from "./utils";
+import { wrapLogger, createNanoLogger } from "./utils";
 
 const pretty = require('@mechanicalhuman/bunyan-pretty')
 
@@ -25,20 +25,24 @@ export class Hippodamia {
 
         const logger_level = ServerSettingsManager.instance.settings.logging.level;
 
-        this.logger = wrapLogger(logger_level, createLogger({
-            name: "hippodamia",
-            level: logger_level,
-            stream: pretty(process.stdout, { timeStamps: false }),
-        }))
+        // this.logger = wrapLogger(logger_level, createLogger({
+        //     name: "hippodamia",
+        //     level: logger_level,
+        //     stream: pretty(process.stdout, { timeStamps: false }),
+        // }))
 
+        this.logger = createNanoLogger("hippodamia", logger_level)
+
+        // this.bot = new Bot({
+        //     logger: wrapLogger(logger_level, createLogger({
+        //         name: "bot",
+        //         level: logger_level,
+        //         stream: pretty(process.stdout, { timeStamps: false }),
+        //     })),
+        // })
         this.bot = new Bot({
-            logger: wrapLogger(logger_level, createLogger({
-                name: "bot",
-                level: logger_level,
-                stream: pretty(process.stdout, { timeStamps: false }),
-            })),
+            logger: createNanoLogger("bot", logger_level)
         })
-
         this.i18n = new I18n('zh_cn', packageDirectorySync() + '/config/languages', this.logger).build() as any
         Hippodamia.instance = this
     }

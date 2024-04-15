@@ -11,6 +11,8 @@ const { HorseUtils } = require("../../../src/utils/HorseUtils")
  * @typedef {import("@hippodamia/core").Horse} Horse
  */
 
+
+
 /**
  * woohoo buff
  * @type {Buff}

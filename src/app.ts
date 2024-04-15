@@ -17,13 +17,13 @@ import { RandomEventManager } from './components/random-events/RandomEventManage
 import * as fs from 'fs';
 import { resolve } from 'path';
 import { packageDirectorySync } from 'pkg-dir';
-import { update } from "./update";
-import { version } from "bun";
+import { update,version } from "./update";
 
 console.log('Hippodamia Server 启动中...')
 
 
 if (!fs.existsSync(resolve('./package.json')))
+    
     fs.writeFileSync(resolve('./package.json'), JSON.stringify({
         name: 'hippodamia-server',
         version
@@ -31,7 +31,6 @@ if (!fs.existsSync(resolve('./package.json')))
 
 if (Bun.env.NODE_ENV != 'development' && !await update())
     process.exit(0)
-
 
 
 // 根据启动参数载入配置文件
