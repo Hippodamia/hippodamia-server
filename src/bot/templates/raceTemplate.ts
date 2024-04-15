@@ -7,7 +7,7 @@ const map = {
 }
 export function raceCreatedTemplate(mode: keyof typeof map = 'pure') {
 
-    return Hippodamia.instance.i18n['race.created.message'].replace('%mode%', map[mode])
+    return Hippodamia.instance.i18n['race.pre.created'].replace('%mode%', map[mode])
 }
 
 export function playerJoinedTemplate(nick: string, currentPlayerCount: number) {
