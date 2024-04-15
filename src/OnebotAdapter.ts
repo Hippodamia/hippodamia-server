@@ -126,18 +126,20 @@ export class OneBotAdapter implements Adapter {
             Bun.serve({
                 fetch: async (req) => {
                     const url = new URL(req.url);
+                    
+                    if(url.pathname === "/onebot" && req.method === "GET"){
+                        return new Response("ok");
+                    }
                     if (url.pathname === "/onebot" && req.method === "POST") {
 
                         const body = await req.json();
                         this.bot.logger.debug(`[OneBotAdapter] Received HTTP request: ${req.method} ${req.url}`)
                         this.bot.logger.debug(body)
-
                         return new Response(this.handler['message'](body));
-
                     }
                     return new Response("404!");
                 },
-                port: this.config.port,
+                port: Bun.env.PORT ?? this.config.port ?? 3000, //端口优先使用环境变量PORT
             });
 
             this.bot.logger.info(`[OneBotAdapter] HTTP 监听服务以启动 ${this.config.port}`)
@@ -151,11 +153,11 @@ export class OneBotAdapter implements Adapter {
                 this.bot.logger.info(`[OneBotAdapter] 正向ws已连接`)
             })
             //监听消息事件
-            this.client?.ws.on('message', (data)=>{
+            this.client?.ws.on('message', (data) => {
                 try {
                     this.bot.logger.debug(`[OneBotAdapter] WS received message: ${data.toString()}`)
                     this.handler['message'](JSON.parse(data.toString()) as Message)
-                }catch(e){
+                } catch (e) {
                     this.bot.logger.error(`[OneBotAdapter] WS message error: ${e}`)
                 }
             })

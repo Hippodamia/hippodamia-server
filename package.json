@@ -6,6 +6,7 @@
   "scripts": {
     "db:studio": "drizzle-kit studio",
     "test": "bun test",
+    "start": "bun run src/app.ts",
     "test-events":"bun run tests/random_events.ts",
     "dev:prod":"NODE_ENV=production bun --hot run src/app.ts",
     "dev": "NODE_ENV=development bun --hot run src/app.ts",
