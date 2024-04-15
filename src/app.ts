@@ -29,6 +29,10 @@ if (!fs.existsSync(resolve('./package.json')))
         version
     }))
 
+if(!fs.existsSync(resolve('./config'))){
+    fs.mkdirSync(resolve('./config'), { recursive: true })
+}
+
 if (Bun.env.NODE_ENV != 'development' && !await update())
     process.exit(0)
 

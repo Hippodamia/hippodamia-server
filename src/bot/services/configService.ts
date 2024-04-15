@@ -4,6 +4,10 @@ import path from 'node:path';
 import { packageDirectorySync } from 'pkg-dir';
 
 const readJsonFiles = (directory: string): any[] => {
+    if (!fs.existsSync(directory)) {
+        fs.mkdirSync(directory, { recursive: true });
+    }
+
     const files = fs.readdirSync(directory);
     const jsonFiles = files.filter((file) => file.endsWith('.json'));
     const data = [];

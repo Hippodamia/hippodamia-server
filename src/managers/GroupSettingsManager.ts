@@ -1,11 +1,12 @@
 import { GameModeSetting, GroupSetting } from "@/types";
 //import json5 from 'json5'
 import * as fs from 'node:fs';
-import {packageDirectorySync} from 'pkg-dir'
+import * as path from 'node:path';
+import { packageDirectorySync } from 'pkg-dir'
 
 export class GroupSettingsManager {
 
-    path =  packageDirectorySync()+`/config/groups_settings.json`
+    path = packageDirectorySync() + `/config/groups_settings.json`
 
     settings: { 'global': GroupSetting, [key: string]: GroupSetting } = { 'global': {} }
 
@@ -51,12 +52,22 @@ export class GroupSettingsManager {
     }
 
     private load() {
-       
+        if (!fs.existsSync(this.path)) {
+            const dir = path.dirname(this.path)
+            fs.mkdirSync(dir, { recursive: true })
+            fs.writeFileSync(this.path, JSON.stringify({
+                global: {
+                    "enable": true,
+                    "admins": []
+                }
+            }, null, 2))
+        }
+
         this.settings = JSON.parse(fs.readFileSync(this.path, 'utf-8').toString())
     }
 
     private save() {
-        
+
         fs.writeFileSync(this.path, JSON.stringify(this.settings, null, 2))
     }
 
