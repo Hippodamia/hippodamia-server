@@ -14,6 +14,7 @@ export class GroupSettingsManager {
     constructor() {
         if (GroupSettingsManager.instance)
             return GroupSettingsManager.instance
+        GroupSettingsManager.instance = this
         this.load()
     }
     public reload() {
