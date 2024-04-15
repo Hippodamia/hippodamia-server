@@ -11,3 +11,4 @@ node_modules
 hippodamia-server
 
 settings.remote.json
+dev.sqlite
