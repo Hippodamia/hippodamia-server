@@ -39,16 +39,10 @@ export class Hippodamia {
             this.logger = createNanoLogger("hippodamia", logger_level)
 
 
-        // this.bot = new Bot({
-        //     logger: wrapLogger(logger_level, createLogger({
-        //         name: "bot",
-        //         level: logger_level,
-        //         stream: pretty(process.stdout, { timeStamps: false }),
-        //     })),
-        // })
         this.bot = new Bot({
             logger: process.platform === 'linux' ? bunyanLogger("bot") : createNanoLogger("bot", logger_level)
         })
+        
         this.i18n = new I18n('zh_cn', packageDirectorySync() + '/config/languages', this.logger).build() as any
         Hippodamia.instance = this
     }

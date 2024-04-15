@@ -17,19 +17,19 @@ import { RandomEventManager } from './components/random-events/RandomEventManage
 import * as fs from 'fs';
 import { resolve } from 'path';
 import { packageDirectorySync } from 'pkg-dir';
-import { update,version } from "./update";
+import { update, version } from "./update";
 
 console.log('Hippodamia Server 启动中...')
 
 
 if (!fs.existsSync(resolve('./package.json')))
-    
+
     fs.writeFileSync(resolve('./package.json'), JSON.stringify({
         name: 'hippodamia-server',
         version
     }))
 
-if(!fs.existsSync(resolve('./config'))){
+if (!fs.existsSync(resolve('./config'))) {
     fs.mkdirSync(resolve('./config'), { recursive: true })
 }
 
@@ -142,6 +142,14 @@ bot.cmd('/hippodamia|赛马 off', RouteWithPermission(Routers.hippodamiaRoutes.o
 bot.cmd('/hippodamia|赛马 on', RouteWithPermission(Routers.hippodamiaRoutes.on))
 bot.cmd('/hippodamia|赛马 config', RouteWithPermission(Routers.hippodamiaRoutes.showGroupConfig))
 
+// 重载事件
+bot.cmd('hippodamia|赛马 reload random_events|re', (ctx) => {
+
+})
+
+bot.cmd('hippodamia|赛马 update random_events|re', (ctx) => {
+    
+})
 
 //bot.commands.find(cmd => cmd.name == 'race')!.showHelp = true;
 
@@ -171,6 +179,8 @@ bot.cmd('赫尔好可爱', (ctx) => {
 bot.cmd('抢劫小马商店', (ctx) => {
     ctx.reply('商店还没开放呢...')
 })
+
+
 logger.info('命令路由加载完成')
 
 //载入核心数据
