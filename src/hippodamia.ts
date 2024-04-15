@@ -25,13 +25,19 @@ export class Hippodamia {
 
         const logger_level = ServerSettingsManager.instance.settings.logging.level;
 
-        // this.logger = wrapLogger(logger_level, createLogger({
-        //     name: "hippodamia",
-        //     level: logger_level,
-        //     stream: pretty(process.stdout, { timeStamps: false }),
-        // }))
+        const bunyanLogger = (sevice: string) => {
+            return wrapLogger(logger_level, createLogger({
+                name: sevice,
+                level: logger_level,
+                stream: pretty(process.stdout, { timeStamps: false }),
+            }))
+        }
 
-        this.logger = createNanoLogger("hippodamia", logger_level)
+        if (process.platform === 'linux')
+            this.logger = bunyanLogger("hippodamia")
+        else
+            this.logger = createNanoLogger("hippodamia", logger_level)
+
 
         // this.bot = new Bot({
         //     logger: wrapLogger(logger_level, createLogger({
@@ -41,7 +47,7 @@ export class Hippodamia {
         //     })),
         // })
         this.bot = new Bot({
-            logger: createNanoLogger("bot", logger_level)
+            logger: process.platform === 'linux' ? bunyanLogger("bot") : createNanoLogger("bot", logger_level)
         })
         this.i18n = new I18n('zh_cn', packageDirectorySync() + '/config/languages', this.logger).build() as any
         Hippodamia.instance = this

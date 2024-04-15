@@ -24,6 +24,8 @@ export async function update() {
         console.log(`[更新检测] 发现新版本 ${latest}, 请前往gitee发行页面下载最新版编译文件`);
         c.execSync("start https://gitee.com/heerkaisair/hippodamia-server/releases/")
         return false;
+    }else{
+        console.log("[更新检测] 当前已是最新版本!")
     }
 
     await updateContents()
@@ -60,7 +62,7 @@ export async function updateContents() {
 
         const dir = dirname(path)
         fs.existsSync(dir) || fs.mkdirSync(dir, { recursive: true });
-        
+
         fs.writeFileSync(path, await resp.text());
         console.log(`[更新检测] ${content}文件更新成功`);
     };
