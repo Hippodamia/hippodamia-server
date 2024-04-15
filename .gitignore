@@ -9,3 +9,5 @@ node_modules
 .idea
 
 hippodamia-server
+
+settings.remote.json
