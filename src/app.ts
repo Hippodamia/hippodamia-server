@@ -58,7 +58,11 @@ if (arg) {
 console.log('使用配置文件:', setting_path)
 
 
+// 初始化服务设置管理器
 new ServerSettingsManager(fs.existsSync(setting_path) ? setting_path : undefined);
+
+// 初始化群组设置管理器
+new GroupSettingsManager()
 
 // 初始化Hippodamia核心
 

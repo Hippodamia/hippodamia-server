@@ -1,4 +1,4 @@
-import { GameModeSetting, GroupSetting } from "../types";
+import { GameModeSetting, GroupSetting } from "@/types";
 //import json5 from 'json5'
 import * as fs from 'node:fs';
 import {packageDirectorySync} from 'pkg-dir'
@@ -9,7 +9,7 @@ export class GroupSettingsManager {
 
     settings: { 'global': GroupSetting, [key: string]: GroupSetting } = { 'global': {} }
 
-    static instance: GroupSettingsManager = new GroupSettingsManager()
+    static instance: GroupSettingsManager
 
     constructor() {
         if (GroupSettingsManager.instance)
