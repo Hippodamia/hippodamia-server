@@ -1,4 +1,4 @@
-import { IContentManager } from '@hippodamia/core';
+import { HorseStatus, IContentManager } from '@hippodamia/core';
 import { RandomEvent, RandomEventType } from './types';
 import { getFilesRecursively } from '../../utils';
 import { packageDirectorySync } from 'pkg-dir'
@@ -65,7 +65,8 @@ export class RandomEventManager implements IContentManager<RandomEvent> {
         const ctx = vm.createContext(
             {
                 RandomEventManager,
-                HorseUtils
+                HorseUtils,
+                HorseStatus,
             }
         );
         const root = packageDirectorySync() + '/config/scripts/random_events';

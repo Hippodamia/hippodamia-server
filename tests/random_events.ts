@@ -12,7 +12,7 @@ const randomEventManager = new RandomEventManager(Hippodamia.instance.logger)
 
 
 randomEventManager.events.forEach(event => {
-    if (!event.name.startsWith('heer'))
+    if (!event.name.startsWith('civilEng'))
         return;
 
     const race = new Race({ mode: 'random', speed: 10, length: 14 })

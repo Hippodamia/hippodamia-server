@@ -34,7 +34,7 @@ export async function update() {
     }
 
     console.log("[更新检测] 当前已是最新版本!")
-    
+
     await updateContents()
 
     return true;
@@ -45,9 +45,9 @@ export async function update() {
  */
 export async function updateContents() {
     for (const updater of updaters) {
-        updater.list().forEach(async (file) => {
-            updater.update(file)
-        })
+        for (const file of updater.list()) {
+            await updater.update(file)
+        }
     }
 }
 

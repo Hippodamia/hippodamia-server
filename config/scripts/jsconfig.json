@@ -17,6 +17,5 @@
         "include": [
             "@hippodamia/core"
         ]
-        
     }
 }
