@@ -10,7 +10,7 @@ import { CommandRouter } from './types';
 //所有的命令路由
 import * as Routers from './bot/routes'
 //import { SandboxAdapter } from "@hippodamia/adapter-sandbox";
-import ServerSettingsManager from './managers/ServerSettingsManager';
+import ServerSettingsManager, { ServerSettings } from './managers/ServerSettingsManager';
 import { OneBotAdapter } from './OnebotAdapter';
 import { RandomEventManager } from './components/random-events/RandomEventManager';
 
@@ -32,6 +32,22 @@ if (!fs.existsSync(resolve('./package.json')))
 if (!fs.existsSync(resolve('./config'))) {
     fs.mkdirSync(resolve('./config'), { recursive: true })
 }
+
+if (!fs.existsSync(resolve('./config/settings.json'))) {
+    fs.writeFileSync(resolve('./config/settings.json'), JSON.stringify(
+        {
+            logging: {
+                level: 'info',
+            },
+            mode: 'onebot',
+            onebot: {
+                mode: 'http',
+                api: 'http://127.0.0.1:5700'
+            }
+        } as ServerSettings
+    ))
+}
+
 
 if (Bun.env.NODE_ENV != 'development' && !await update())
     process.exit(0)
@@ -148,7 +164,7 @@ bot.cmd('hippodamia|赛马 reload random_events|re', (ctx) => {
 })
 
 bot.cmd('hippodamia|赛马 update random_events|re', (ctx) => {
-    
+
 })
 
 //bot.commands.find(cmd => cmd.name == 'race')!.showHelp = true;

@@ -23,7 +23,7 @@ type LoggingSettings = {
     level: 'info' | 'debug' | 'warn' | 'error' | 'fatal' | 'trace' 
 }
 
-type ServerSettings = HippodamiaAPISettings & (OnebotServerSettings | TestServerSettings) & {
+export type ServerSettings = HippodamiaAPISettings & (OnebotServerSettings | TestServerSettings) & {
     logging: LoggingSettings
 };
 
