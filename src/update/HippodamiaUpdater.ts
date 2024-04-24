@@ -40,10 +40,9 @@ export abstract class HippodamiaUpdater implements IUpdater {
             // overwrite
             if (fs.existsSync(path) && file.overwrite == true) {
                 fs.rmSync(path, { force: true });
-                fs.writeFileSync(path, text);
                 console.log(`[更新检测] ${file.file}进行了覆盖更新`);
             }
-
+            fs.writeFileSync(path, text);
             console.log(`[更新检测] ${file.file}文件更新成功`);
             return true;
         } catch (e) {
