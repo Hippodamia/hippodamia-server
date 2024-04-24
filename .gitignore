@@ -14,3 +14,5 @@ settings.remote.json
 config/dev.sqlite
 
 bundle.js
+
+dist/
