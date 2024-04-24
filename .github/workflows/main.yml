@@ -15,6 +15,35 @@ jobs:
         run: bun i
       - name: Type Check
         run: bun tsc
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - run: bun i
+      - run: bun run build:linux
+      - run: bun run bundle
+      - name: Zip production artifacts
+        run: |
+          cp ./package.json ./dist/
+          cd dist/
+          bun i --production
+      - uses: vimtor/action-zip@v1.2
+        with:
+          files: dist/
+          dest: build-linux.zip
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-for-linux
+          path: |
+            hippodamia-server
+            build-linux.zip
   build:
     runs-on: windows-latest
     steps:
@@ -26,7 +55,7 @@ jobs:
           bun-version: latest
       - run: bun -v
       - run: bun i
-      - run: bun run build-win
+      - run: bun run build:win
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
         with:
