@@ -19,15 +19,17 @@ import { resolve } from 'path';
 import { packageDirectorySync } from 'pkg-dir';
 import { update, version } from "./update";
 
+import inquirer from "inquirer";
+
 console.log('Hippodamia Server 启动中...')
 
 
 if (!fs.existsSync(resolve('./package.json')))
-
     fs.writeFileSync(resolve('./package.json'), JSON.stringify({
         name: 'hippodamia-server',
         version
     }))
+
 
 if (!fs.existsSync(resolve('./config'))) {
     fs.mkdirSync(resolve('./config'), { recursive: true })
@@ -62,16 +64,16 @@ if (arg) {
     setting_path = `${packageDirectorySync()}/config/settings${arg ? '.' : ''}${arg}.json`;
 } else {
     setting_path = `${packageDirectorySync()}/config/settings.json`;
-    // const files = fs.readdirSync(`${packageDirectorySync()}/config/`)
-    //     .filter(file => file.startsWith('settings') && file.endsWith('.json'))
-    // const select = await inquirer.prompt({
-    //     type: 'list',
-    //     name: 'file',
-    //     message: '请选择配置文件',
-    //     choices: files
-    // })
-    // setting_path = `${packageDirectorySync()}/config/${select.file}`
-    // console.log('使用配置文件:', setting_path)
+    const files = fs.readdirSync(`${packageDirectorySync()}/config/`)
+        .filter(file => file.startsWith('settings') && file.endsWith('.json'))
+    const select = await inquirer.prompt({
+        type: 'list',
+        name: 'file',
+        message: '请选择配置文件',
+        choices: files
+    })
+    setting_path = `${packageDirectorySync()}/config/${select.file}`
+    console.log('使用配置文件:', setting_path)
 }
 
 console.log('使用配置文件:', setting_path)
