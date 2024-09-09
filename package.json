@@ -30,7 +30,7 @@
   "dependencies": {
     "@hippodamia/adapter-sandbox": "^0.1.0-beta",
     "@hippodamia/bot": "^1.2.3",
-    "@hippodamia/core": "^1.0.3",
+    "@hippodamia/core": "^1.0.5",
     "@mechanicalhuman/bunyan-pretty": "^3.1.0",
     "amesu": "^2.2.0",
     "bunyan": "^1.8.15",
