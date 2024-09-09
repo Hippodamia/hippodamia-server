@@ -1,5 +1,4 @@
 //remove
-/// <reference path="../../../dist/types.d.ts" />
 const {Horse,Race,EffectType} = require("@hippodamia/core")
 const {RandomEventManager,RandomEventType} = require("../../../src/components/random-events/index")
 
@@ -44,7 +43,7 @@ const sleepy_red_tea = {
     desc: '选手一饮而尽的红茶让其陷入了昏睡',
     handler: (race, horse) => {
 
-        race.pushLog(horse, '%player%一饮而尽了红茶，立即感到昏昏沉沉，陷入了昏睡。');
+        race.pushLog(horse, '%player%一饮而尽了红茶,立即感到昏昏沉沉,陷入了昏睡.');
 
         horse.buffContainer.add(buff_114514, 1)
     }
@@ -57,16 +56,16 @@ const improved_sleepy_red_tea = {
     name: '14514.red_tea.v2',
     alias: '改良版昏睡红茶2.0',
     type: 1, // Negative
-    desc: '选手发现路边有一瓶新款红茶，偷偷喝下，结果顿感不妙，有100%基础概率陷入昏睡，持续2回合。',
+    desc: '选手发现路边有一瓶新款红茶,偷偷喝下,结果顿感不妙,有100%基础概率陷入昏睡,持续2回合.',
     handler: (race, horse) => {
 
         if (Math.random() < 1.0 * (1 - horse.Property.effect_resistance)) {
 
             horse.buffContainer.add(buff_114514, 2)
 
-            race.pushLog(horse, '%player%一饮而尽了新款红茶，立即感到昏昏沉沉，陷入了昏睡。');
+            race.pushLog(horse, '%player%一饮而尽了新款红茶,立即感到昏昏沉沉,陷入了昏睡.');
         } else {
-            race.pushLog(horse, '%player%一饮而尽了新款红茶，但没有陷入昏睡。');
+            race.pushLog(horse, '%player%一饮而尽了新款红茶,但没有陷入昏睡.');
         }
 
     }
@@ -79,10 +78,10 @@ const infinite_red_tea = {
     name: '114514.red_tea.infinity',
     alias: '无限红茶?',
     type: 1, // Negative
-    desc: '为什么这杯昏睡红茶喝不完！原来是SCP-114514无限红茶！选手陷入持续999回合的眩晕状态。',
+    desc: '为什么这杯昏睡红茶喝不完！原来是SCP-114514无限红茶！选手陷入持续999回合的眩晕状态.',
     handler: (race, horse) => {
 
-        race.pushLog(horse, '%player%发觉这杯红茶怎么也喝不完，原来这是无限红茶！他立即陷入了眩晕状态。');
+        race.pushLog(horse, '%player%发觉这杯红茶怎么也喝不完,原来这是无限红茶！他立即陷入了眩晕状态.');
 
         horse.buffContainer.add(buff_114514, 999)
 
@@ -96,13 +95,13 @@ const yelling_on_floor = {
     name: 'player.yelling',
     alias: '哼哼啊啊啊',
     type: 1, // Negative
-    desc: '选手躺在地上，大声叫嚷，吵得其他选手也无法专心比赛',
+    desc: '选手躺在地上,大声叫嚷,吵得其他选手也无法专心比赛',
     handler: (race, horse) => {
-        race.pushLog(horse, '%player%躺在地上大声叫嚷，使其他选手无法专心比赛。');
+        race.pushLog(horse, '%player%躺在地上大声叫嚷,使其他选手无法专心比赛.');
         let all_horses = race.getOthers([horse])
         all_horses.forEach(other => {
             // Excluding the yelling horse
-            race.pushLog(horse, `因为%player%的叫嚷，${other.raw_display}的速度下降了`);
+            race.pushLog(horse, `因为%player%的叫嚷,${other.raw_display}的速度下降了`);
             other.buffContainer.add({
                 name: '哼哼啊啊啊',
                 type: 1,
@@ -126,7 +125,7 @@ const sleepy_tea_bomb = {
     name: 'xianbei.red_tea_bomb',
     alias: '仙贝红茶炸弹递送员',
     type: 1, // Negative
-    desc: '选手发明出了可以必定昏睡的红茶炸弹，穿上小马快递服，每回合随机给一个选手投掷红茶炸弹，必定陷入1回合昏睡状态。',
+    desc: '选手发明出了可以必定昏睡的红茶炸弹,穿上小马快递服,每回合随机给一个选手投掷红茶炸弹,必定陷入1回合昏睡状态.',
     handler: (race, horse) => {
 
         /**
@@ -142,7 +141,7 @@ const sleepy_tea_bomb = {
                     const others = race.getOthers([horse]);
                     const target = others[Math.floor(Math.random() * others.length)]
 
-                    race.pushLog(horse, `%player%向${target.raw_display}投掷了一颗红茶炸弹，使其入了昏睡状态`);
+                    race.pushLog(horse, `%player%向${target.raw_display}投掷了一颗红茶炸弹,使其入了昏睡状态`);
                 }
             }
         }

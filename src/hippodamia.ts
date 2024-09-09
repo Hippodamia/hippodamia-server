@@ -19,6 +19,10 @@ export class Hippodamia {
 
     bot!: Bot
 
+    /**
+     * Hippodamia 核心类
+     * @returns {Hippodamia} 
+     */
     constructor() {
         if (Hippodamia.instance)
             return Hippodamia.instance;
@@ -34,15 +38,17 @@ export class Hippodamia {
         }
 
         if (process.platform === 'linux')
-            this.logger = bunyanLogger("hippodamia")
+            //this.logger = bunyanLogger("hippodamia")
+            this.logger = createNanoLogger("hippodamia", logger_level)
         else
             this.logger = createNanoLogger("hippodamia", logger_level)
 
 
         this.bot = new Bot({
-            logger: process.platform === 'linux' ? bunyanLogger("bot") : createNanoLogger("bot", logger_level)
+            //logger: process.platform === 'linux' ? bunyanLogger("bot") : createNanoLogger("bot", logger_level)
+            logger: createNanoLogger("bot", logger_level)
         })
-        
+
         this.i18n = new I18n('zh_cn', packageDirectorySync() + '/config/languages', this.logger).build() as any
         Hippodamia.instance = this
     }

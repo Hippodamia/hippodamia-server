@@ -11,8 +11,12 @@ node_modules
 hippodamia-server
 
 settings.remote.json
+settings.qq.json
 config/dev.sqlite
 
 bundle.js
 
 dist/
+dist.tar.gz
+
+config/dev.sqlite

@@ -14,33 +14,34 @@
     "dev:remote": "NODE_ENV=development bun --hot run src/app.ts remote",
     "build:linux": "bun build src/app.ts --compile --outfile=hippodamia-server",
     "build:win": "bun build src/app.ts --compile --outfile=hippodamia-server.exe",
-    "bundle": "bun build ./src/app.ts --outfile=dist/bundle.js --target=bun",
+    "bundle": "bun build ./src/app.ts --outfile=dist/bundle.js --target=bun && cp ./package.json ./dist/  && cp -r ./config ./dist/config && tar -czf dist.tar.gz ./dist",
     "test:act": "act --artifact-server-path /tmp/artifacts"
   },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/bunyan": "^1.8.11",
     "@types/inquirer": "^9.0.7",
-    "@types/ws": "^8.5.10",
-    "drizzle-kit": "^0.20.14"
+    "@types/ws": "^8.5.12",
+    "drizzle-kit": "^0.20.18"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.4.5"
   },
   "dependencies": {
     "@hippodamia/adapter-sandbox": "^0.1.0-beta",
-    "@hippodamia/bot": "^1.2.0",
+    "@hippodamia/bot": "^1.2.3",
     "@hippodamia/core": "^1.0.3",
     "@mechanicalhuman/bunyan-pretty": "^3.1.0",
+    "amesu": "^2.2.0",
     "bunyan": "^1.8.15",
-    "drizzle-orm": "^0.30.6",
+    "drizzle-orm": "^0.30.10",
     "eventemitter3": "^5.0.1",
-    "fastify": "^4.26.2",
-    "inquirer": "^9.2.20",
+    "fastify": "^4.28.1",
+    "inquirer": "^9.3.6",
     "json5": "^2.2.3",
-    "nonalog": "^1.0.6",
+    "nonalog": "^1.1.0",
     "onebot-client": "^1.1.1",
     "pkg-dir": "^8.0.0",
-    "ws": "^8.16.0"
+    "ws": "^8.18.0"
   }
 }

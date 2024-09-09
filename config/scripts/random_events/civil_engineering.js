@@ -1,5 +1,4 @@
 //remove
-/// <reference path="../../../dist/types.d.ts" />
 const { HorseStatus } = require("@hippodamia/core");
 const { RandomEventManager } = require("../../../src/components/random-events")
 const { HorseUtils } = require("../../../src/utils/HorseUtils")
@@ -21,10 +20,10 @@ const civilEng_ch1 = {
     name: 'civilEng.dream',
     alias: '大梦四年 基降狂魔签约国企',
     type: 0, // Positive
-    desc: '四年的梦想，最终签约国企!获得10%效果抵抗',
+    desc: '四年的梦想,最终签约国企!获得10%效果抵抗',
     handler: (race, horse) => {
         horse.Property = { ...horse.Property, effect_resistance: horse.Property.effect_resistance + 0.1 };
-        race.pushLog(horse, '%player%经过四年的努力，成功签约国企,获得效果抵抗!');
+        race.pushLog(horse, '%player%经过四年的努力,成功签约国企,获得效果抵抗!');
     }
 }
 
@@ -35,10 +34,10 @@ const civilEng_ch2 = {
     name: 'civilEng.reimbursement',
     alias: '离家千里 路费报销总部报道',
     type: 0, // Positive
-    desc: '离家千里，报销路费，报道总部，额外前进1格',
+    desc: '离家千里,报销路费,报道总部,额外前进1格',
     handler: (race, horse) => {
         horse.move(1)
-        race.pushLog(horse, '%player%离家千里，报销路费，成功报道总部,额外前进1格!');
+        race.pushLog(horse, '%player%离家千里,报销路费,成功报道总部,额外前进1格!');
     }
 }
 
@@ -49,10 +48,10 @@ const civilEng_ch3 = {
     name: 'civilEng.starHotel',
     alias: '星级酒店 我的生活是你的梦',
     type: 0, // Positive
-    desc: '生活在星级酒店，这就是你的梦想!获得+10%效果抵抗',
+    desc: '生活在星级酒店,这就是你的梦想!获得+10%效果抵抗',
     handler: (race, horse) => {
         horse.Property = { ...horse.Property, effect_resistance: horse.Property.effect_resistance + 0.1 };
-        race.pushLog(horse, '%player%的生活就像你的梦想，住在星级酒店，幸福感满满,效果抵抗提升!');
+        race.pushLog(horse, '%player%的生活就像你的梦想,住在星级酒店,幸福感满满,效果抵抗提升!');
     }
 }
 
@@ -74,23 +73,23 @@ const civilEng_ch4 = {
 }
 
 /**
- * 军训开始，绽放自我
+ * 军训开始,绽放自我
  * @type {RandomEvent}
  */
 const civilEng_ch5 = {
     name: 'civilEng.training.begin',
     alias: '军训开始 高谈阔论绽放自我',
     type: 1,
-    desc: '军训带来的不仅是体魄上的锻炼，更是心灵上的锻炼,选手获得+10速度和+20%效果抵抗',
+    desc: '军训带来的不仅是体魄上的锻炼,更是心灵上的锻炼,选手获得+10速度和+20%效果抵抗',
     handler: (race, horse) => {
         // 马儿的准度和力量提升效果
         horse.Property = { ...horse.Property, speed: horse.Property.speed + 10, effect_resistance: horse.Property.effect_resistance + 0.2 };
-        race.pushLog(horse, '%player%在军训中不断提升自己，获得速度和效果抵抗提升');
+        race.pushLog(horse, '%player%在军训中不断提升自己,获得速度和效果抵抗提升');
     }
 }
 
 /**
- * 迎接风宴，小试身手
+ * 迎接风宴,小试身手
  * @type {RandomEvent}
  */
 const civilEng_ch6 = {
@@ -209,7 +208,7 @@ const civilEng_ch12 = {
     desc: '选手因为异地分手伤心离开了比赛',
     handler: (race, horse) => {
         horse.Property = { ...horse.Property, status: HorseStatus.LEFT };
-        race.pushLog(horse, '%player%异地分手 试问苍天谁知我心!十分心痛,直接痛晕过去，退出了比赛!');
+        race.pushLog(horse, '%player%异地分手 试问苍天谁知我心!十分心痛,直接痛晕过去,退出了比赛!');
     }
 }
 

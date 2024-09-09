@@ -1,5 +1,4 @@
 //remove
-/// <reference path="../../../dist/types.d.ts" />
 const { RandomEventManager } = require("../../../src/components/random-events")
 const { HorseUtils } = require("../../../src/utils/HorseUtils")
 

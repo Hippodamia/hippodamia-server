@@ -11,7 +11,7 @@ import { CommandRouter } from './types';
 import * as Routers from './bot/routes'
 //import { SandboxAdapter } from "@hippodamia/adapter-sandbox";
 import ServerSettingsManager, { ServerSettings } from './managers/ServerSettingsManager';
-import { OneBotAdapter } from './OnebotAdapter';
+import { OneBotAdapter } from './adapters/OnebotAdapter';
 import { RandomEventManager } from './components/random-events/RandomEventManager';
 
 import * as fs from 'fs';
@@ -20,10 +20,12 @@ import { packageDirectorySync } from 'pkg-dir';
 import { update, version } from "./update";
 
 import inquirer from "inquirer";
+import { QQGroupAdapter } from "./adapters/QQGroupAdapter";
 
 console.log('Hippodamia Server 启动中...')
 
 
+// 检查是否有package.json文件,如果没有则创建一个
 if (!fs.existsSync(resolve('./package.json')))
     fs.writeFileSync(resolve('./package.json'), JSON.stringify({
         name: 'hippodamia-server',
@@ -31,10 +33,12 @@ if (!fs.existsSync(resolve('./package.json')))
     }))
 
 
+// 创建config文件夹
 if (!fs.existsSync(resolve('./config'))) {
     fs.mkdirSync(resolve('./config'), { recursive: true })
 }
 
+// 创建config/settings.json文件
 if (!fs.existsSync(resolve('./config/settings.json'))) {
     fs.writeFileSync(resolve('./config/settings.json'), JSON.stringify(
         {
@@ -50,15 +54,16 @@ if (!fs.existsSync(resolve('./config/settings.json'))) {
     ))
 }
 
-
-if (Bun.env.NODE_ENV != 'development' && !await update())
-    process.exit(0)
+// 更新
+// if (Bun.env.NODE_ENV != 'development' && !await update())
+//     process.exit(0)
 
 
 // 根据启动参数载入配置文件
 const arg = process.argv.length > 2 ? process.argv[2] : undefined;
 
 
+// 初始化服务设置管理器
 let setting_path: string;
 if (arg) {
     setting_path = `${packageDirectorySync()}/config/settings${arg ? '.' : ''}${arg}.json`;
@@ -86,7 +91,6 @@ new ServerSettingsManager(fs.existsSync(setting_path) ? setting_path : undefined
 new GroupSettingsManager()
 
 // 初始化Hippodamia核心
-
 new Hippodamia()
 
 const logger = Hippodamia.instance.logger;
@@ -209,6 +213,9 @@ new RandomEventManager(logger)
 //bot.load(new OPQAdapter('198.18.0.1:8086'))
 const settings = ServerSettingsManager.instance.settings
 
+logger.info('开始加载适配器...')
+
+
 switch (settings.mode) {
     case 'onebot':
         if (!bot.adapters.find(adapter => adapter.info.name == 'onebot11'))
@@ -216,14 +223,20 @@ switch (settings.mode) {
         else
             bot.logger.info('OneBotAdapter already loaded')
     case 'test':
+        break;
+    case 'qq-group':
+        if (!bot.adapters.find(adapter => adapter.info.name == 'qq-group'))
+            bot.load(new QQGroupAdapter(settings.bot))
+        logger.info('QQGroupAdapter loaded')
+        logger.warn('QQGroupAdapter is not fully supported yet, some features may not work properly')
     //@ts-ignore
     //bot.load(new SandboxAdapter("reverse"))
 }
-logger.info('配置->加载器')
+
 
 
 logger.info('启动 HTTP API服务')
 
-console.log('温馨提示:请不要修改config内任何官方发布的文件(包括random_events下的事件脚本,languages下的default文件),这些内容会在版本更新时被强制替换成最新版本')
+logger.info('温馨提示:请不要修改config内任何官方发布的文件(包括random_events下的事件脚本,languages下的default文件),这些内容会在版本更新时被强制替换成最新版本')
 startListen().then().catch(e => console.log(e));
 

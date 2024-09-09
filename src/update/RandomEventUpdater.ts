@@ -17,7 +17,7 @@ export class LanguagesUpdater extends HippodamiaUpdater {
     list(): UpdateFile[] {
         return [
             { file: '/config/languages/zh_cn_default.lang' }
-        ];
+        ]; 
     }
 }
 

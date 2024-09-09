@@ -1,5 +1,4 @@
 import { Adapter, Bot } from "@hippodamia/bot";
-import { getTextOfJSDocComment } from "typescript";
 import { Client, GroupMessage, Message, PrivateMessage } from "onebot-client";
 
 import { WebSocket } from "ws";
@@ -12,7 +11,7 @@ export type OneBotConfig =
 export class OneBotAdapter implements Adapter {
 
     info: { version: string; name: string; desc: string; } = {
-        version: "0.0.1",
+        version: "0.0.2",
         name: "onebot11",
         desc: "OneBot v11 Adapter for Hippodamia Bot Framework"
     }
@@ -20,6 +19,12 @@ export class OneBotAdapter implements Adapter {
     api: {
         sendGroupMessage: (group_id: string, message: string, auto_escape?: boolean) => Promise<number>,
         sendPrivateMessage: (user_id: string, message: string, auto_escape?: boolean) => Promise<number>,
+    }
+
+    code = {
+        at: (target: string) => {
+            return `[CQ:at,qq=${target}]`
+        }
     }
 
     bot!: Bot;
@@ -126,8 +131,8 @@ export class OneBotAdapter implements Adapter {
             Bun.serve({
                 fetch: async (req) => {
                     const url = new URL(req.url);
-                    
-                    if(url.pathname === "/onebot" && req.method === "GET"){
+
+                    if (url.pathname === "/onebot" && req.method === "GET") {
                         return new Response("ok");
                     }
                     if (url.pathname === "/onebot" && req.method === "POST") {

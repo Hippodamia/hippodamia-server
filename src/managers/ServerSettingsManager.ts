@@ -1,7 +1,8 @@
 import { One } from 'drizzle-orm';
 import fs from 'node:fs';
-import { OneBotConfig } from '../OnebotAdapter';
+import { OneBotConfig } from '../adapters/OnebotAdapter';
 import { packageDirectorySync } from 'pkg-dir';
+import { QQGroupConfig } from '@/adapters/QQGroupAdapter';
 
 
 interface HippodamiaAPISettings {
@@ -19,11 +20,16 @@ type TestServerSettings = {
     test: OneBotConfig
 }
 
+type QQGroupServerSettings = {
+    mode: 'qq-group',
+    bot: QQGroupConfig
+}
+
 type LoggingSettings = {
     level: 'info' | 'debug' | 'warn' | 'error' | 'fatal' | 'trace' 
 }
 
-export type ServerSettings = HippodamiaAPISettings & (OnebotServerSettings | TestServerSettings) & {
+export type ServerSettings = HippodamiaAPISettings & (OnebotServerSettings | TestServerSettings | QQGroupServerSettings) & {
     logging: LoggingSettings
 };
 
